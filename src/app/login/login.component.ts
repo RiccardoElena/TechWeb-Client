@@ -37,7 +37,7 @@ export class LoginComponent {
       ).subscribe({
         next: (token) => {
           this.authService.updateToken(token).then(() => {
-            setTimeout(() => { this.router.navigateByUrl("/todos") }, 10);
+            setTimeout(() => { this.router.navigateByUrl("/") }, 10);
           });
         },
         error: (err) => {

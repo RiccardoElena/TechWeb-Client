@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-todo-list": {
+    "techweb-meme-museum": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-todo-list",
+            "outputPath": "dist/techweb-meme-museum",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -62,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-todo-list:build:production"
+              "buildTarget": "techweb-meme-museum:build:production"
             },
             "development": {
-              "buildTarget": "angular-todo-list:build:development"
+              "buildTarget": "techweb-meme-museum:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -73,7 +73,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "angular-todo-list:build"
+            "buildTarget": "techweb-meme-museum:build"
           }
         },
         "test": {

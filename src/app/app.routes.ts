@@ -10,24 +10,24 @@ export const routes: Routes = [
   {
     path: "",
     component: LandingComponent,
-    title: "To-do List Angular App"
+    title: "TechWeb Meme Museum"
   }, {
     path: "login",
     component: LoginComponent,
-    title: "Login | To-do List Angular App"
+    title: "Login | TechWeb Meme Museum"
   }, {
     path: "signup",
     component: SignupComponent,
-    title: "Sign up | To-do List Angular App"
+    title: "Sign up | TechWeb Meme Museum"
   }, {
     path: "logout",
     component: LogoutComponent,
-    title: "Log out | To-do List Angular App"
+    title: "Log out | TechWeb Meme Museum"
   },
   {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',
-    title: "Page not found | To-do List Angular App"
+    title: "Page not found | TechWeb Meme Museum"
   }
 ];
