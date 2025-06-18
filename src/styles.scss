@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'tailwindcss';
+@use 'ngx-toastr/toastr';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+
+.toast-success {
+  background-color: #0fc396;
+}
+.toast-error {
+  background-color: #BD362F;
+}
+.toast-info {
+  background-color: #2F96B4;
+}
+.toast-warning {
+  background-color: #F89406;
+}
+
+a.link {
+  @apply underline text-amber-600 dark:text-amber-400 hover:text-amber-700 visited:text-amber-800 dark:visited:text-amber-400
+}
+
+.form-error{
+  @apply text-red-600 dark:text-red-400 text-sm pt-2;
+}

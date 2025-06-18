@@ -1,0 +1,75 @@
+<section class="mt-30 lg:mt-35 dark:bg-zinc-900 h-screen">
+  <div
+    class="flex flex-col items-center justify-start px-6 py-8 mx-auto h-full"
+  >
+    <div
+      class="w-full bg-zinc-300 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-zinc-800 dark:border-zinc-700"
+    >
+      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <h1
+          class="text-xl font-bold leading-tight tracking-tight text-zinc-900 md:text-2xl dark:text-zinc-300"
+        >
+          Sign in to your account
+        </h1>
+        <form
+          class="space-y-4 md:space-y-6"
+          [formGroup]="loginForm"
+          (ngSubmit)="handleLogin()"
+        >
+          <div>
+            <label
+              for="user"
+              class="block mb-2 text-sm font-medium text-zinc-900 dark:text-zinc-300"
+              >Your username</label
+            >
+            <input
+              type="text"
+              formControlName="user"
+              id="user"
+              class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg block w-full p-2.5"
+              placeholder="Your username"
+              required=""
+            />
+            @if(submitted && loginForm.controls.user.errors){
+            @if(loginForm.controls.user.errors['required']){
+            <p class="form-error">Username is required.</p>
+            } }
+          </div>
+          <div>
+            <label
+              for="pass"
+              class="block mb-2 text-sm font-medium text-zinc-900 dark:text-zinc-300"
+              >Password</label
+            >
+            <input
+              type="password"
+              formControlName="pass"
+              id="pass"
+              placeholder="••••••••"
+              class="bg-zinc-50 border border-zinc-300 text-zinc-900 sm:text-sm rounded-lg block w-full p-2.5"
+              required=""
+            />
+            @if(submitted && loginForm.controls.pass.errors){
+            @if(loginForm.controls.pass.errors['required']){
+            <p class="form-error">Password is required.</p>
+            } @if(loginForm.controls.pass.errors['minlength']){
+            <p class="form-error">
+              Password should contain at least 4 characters
+            </p>
+            } }
+          </div>
+          <button
+            type="submit"
+            class="w-full text-zinc-50 bg-amber-700 hover:bg-amber-800 rounded-lg text-sm px-5 py-2.5 text-center"
+          >
+            Sign in
+          </button>
+          <p class="text-sm font-medium text-zinc-950 dark:text-zinc-400">
+            Don't have an account yet?
+            <a routerLink="/signup" class="link">Sign up</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

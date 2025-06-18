@@ -1,0 +1,99 @@
+<nav
+  class="z-50 fixed w-full bg-zinc-300 border-amber-800 border-b-2 dark:bg-zinc-900 p-4"
+>
+  <div class="container mx-auto flex justify-between flex-wrap">
+    <a
+      routerLink="/"
+      class="flex items-center space-x-3 rtl:space-x-reverse flex-grow"
+    >
+      <span
+        class="self-center text-md md:text-xl font-semibold zinc-300 space-nowrap dark:text-zinc-300"
+        >WebTech Meme Museum</span
+      >
+    </a>
+    <dark-mode-toggle class="md:order-1" />
+    <button
+      (click)="toggle()"
+      data-collapse-toggle="navbar-default"
+      type="button"
+      class="inline-flex items-center p-1 w-7 h-7 justify-center text-sm text-zinc-950 rounded-lg md:hidden hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-zinc-600 mx-2"
+      aria-controls="navbar-default"
+      aria-expanded="false"
+    >
+      <span class="sr-only">Open main menu</span>
+      <svg
+        class="w-5 h-5"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 17 14"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M1 1h15M1 7h15M1 13h15"
+        />
+      </svg>
+    </button>
+    <div
+      [@openClose]="isMobile ? (isOpen ? 'open' : 'closed') : 'open'"
+      class="w-full md:block md:w-15/100"
+      id="navbar-default"
+    >
+      <ul
+        class="font-semibold w-full flex flex-col p-4 md:p-0 mt-4 border border-zinc-100 rounded-lg bg-zinc-50 md:flex-row md:justify-evenly rtl:space-x-reverse md:mt-0 md:border-0 md:bg-zinc-300 dark:bg-zinc-800 md:dark:bg-zinc-900 dark:border-zinc-700"
+      >
+        @if(! this.authService.isUserAuthenticated()){
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick()"
+            routerLink="/login"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 md:text-amber-700 md:dark:text-amber-500"
+            class="block py-2 px-3 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            >Login</a
+          >
+        </li>
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick()"
+            routerLink="/signup"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 md:text-amber-700 md:dark:text-amber-500"
+            class="block py-2 px-3 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            >Sign up</a
+          >
+        </li>
+        } @else {
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b border-zinc-100 mb-2 dark:border-amber-700'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick()"
+            routerLink="/logout"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-300 md:text-amber-700 md:dark:text-amber-500"
+            class="block py-2 px-3 text-zinc-900 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            >Welcome, {{ this.authService.user() }} (log out)</a
+          >
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
