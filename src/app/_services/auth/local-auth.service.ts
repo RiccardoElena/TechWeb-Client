@@ -8,6 +8,7 @@ import { AuthState } from '../../_types/auth-state.type';
 export class AuthService {
 
   authState: WritableSignal<AuthState> = signal<AuthState>({
+    userId: this.getUserId(),
     user: this.getUser(),
     token: this.getToken(), //get token from localStorage, if there
     isAuthenticated: this.verifyToken(this.getToken()) //verify it's not expired
@@ -19,8 +20,10 @@ export class AuthService {
 
   constructor() {
     effect(() => {
+
       const token = this.authState().token;
       const user = this.authState().user;
+      const userId = this.authState().userId;
       if (token !== null) {
         localStorage.setItem("token", token);
       } else {
@@ -31,13 +34,22 @@ export class AuthService {
       } else {
         localStorage.removeItem("user");
       }
+      if (userId !== null) {
+
+        localStorage.setItem("userId", userId);
+      } else {
+        localStorage.removeItem("userId");
+      }
     });
   }
 
   async updateToken(token: string) {
     const decodedToken: any = jwtDecode(token);
-    const user = decodedToken.user;
+    const user = decodedToken.userName;
+    const userId = decodedToken.userId;
+
     this.authState.set({
+      userId: userId,
       user: user,
       token: token,
       isAuthenticated: this.verifyToken(token)
@@ -46,6 +58,10 @@ export class AuthService {
 
   getToken() {
     return localStorage.getItem("token");
+  }
+
+  getUserId() {
+    return localStorage.getItem("userId");
   }
 
   getUser() {
@@ -75,6 +91,7 @@ export class AuthService {
 
   logout() {
     this.authState.set({
+      userId: null,
       user: null,
       token: null,
       isAuthenticated: false

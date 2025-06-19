@@ -1,5 +1,5 @@
 <nav
-  class="z-50 fixed w-full bg-zinc-300 border-amber-800 border-b-2 dark:bg-zinc-900 p-4"
+  class="z-100 fixed w-full bg-zinc-300 border-amber-800 border-b-2 dark:bg-zinc-900 p-4"
 >
   <div class="container mx-auto flex justify-between flex-wrap">
     <a
@@ -7,16 +7,16 @@
       class="flex items-center space-x-3 rtl:space-x-reverse flex-grow"
     >
       <span
-        class="self-center text-md md:text-xl font-semibold zinc-300 space-nowrap dark:text-zinc-300"
+        class="self-center text-md lg:text-xl font-semibold zinc-300 space-nowrap dark:text-zinc-300"
         >WebTech Meme Museum</span
       >
     </a>
-    <dark-mode-toggle class="md:order-1" />
+    <dark-mode-toggle class="lg:order-1" />
     <button
       (click)="toggle()"
       data-collapse-toggle="navbar-default"
       type="button"
-      class="inline-flex items-center p-1 w-7 h-7 justify-center text-sm text-zinc-950 rounded-lg md:hidden hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-zinc-600 mx-2"
+      class="inline-flex items-center p-1 w-7 h-7 justify-center text-sm text-zinc-950 rounded-lg lg:hidden hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-zinc-600 mx-2"
       aria-controls="navbar-default"
       aria-expanded="false"
     >
@@ -39,12 +39,29 @@
     </button>
     <div
       [@openClose]="isMobile ? (isOpen ? 'open' : 'closed') : 'open'"
-      class="w-full md:block md:w-20/100 lg:w-15/100"
+      class="z-100 w-full lg:block lg:w-1/2 {{
+        this.authService.isUserAuthenticated() ? '' : 'w-1/3 xl:w-1/4'
+      }}"
       id="navbar-default"
     >
       <ul
-        class="font-semibold w-full flex flex-col p-4 md:p-0 mt-4 border border-zinc-100 rounded-lg bg-zinc-50 md:flex-row md:justify-evenly rtl:space-x-reverse md:mt-0 md:border-0 md:bg-zinc-300 dark:bg-zinc-800 md:dark:bg-zinc-900 dark:border-zinc-700"
+        class="font-semibold w-full flex flex-col p-4 lg:p-0 mt-4 border border-zinc-100 rounded-lg bg-zinc-50 lg:flex-row lg:justify-evenly rtl:space-x-reverse lg:mt-0 lg:border-0 lg:bg-zinc-300 dark:bg-zinc-800 lg:dark:bg-zinc-900 dark:border-zinc-700"
       >
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick('memeOfTheDay')"
+            [routerLink]="['/memes', memeOfTheDayId]"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            >Meme of the Day</a
+          >
+        </li>
         @if(! this.authService.isUserAuthenticated()){
         <li
           class="leading-7 {{
@@ -56,8 +73,8 @@
           <a
             (click)="handleNavigationClick()"
             routerLink="/login"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 md:text-amber-700 md:dark:text-amber-500"
-            class="block py-2 px-3 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Login</a
           >
         </li>
@@ -71,27 +88,63 @@
           <a
             (click)="handleNavigationClick()"
             routerLink="/signup"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 md:text-amber-700 md:dark:text-amber-500"
-            class="block py-2 px-3 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Sign up</a
           >
         </li>
         } @else {
+        <!-- this is gonna be potentially replaced with a proper profile page -->
         <li
           class="leading-7 {{
             isMobile
-              ? 'border-b border-zinc-100 mb-2 dark:border-amber-700'
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
               : ''
           }}"
         >
           <a
             (click)="handleNavigationClick()"
-            routerLink="/logout"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-300 md:text-amber-700 md:dark:text-amber-500"
-            class="block py-2 px-3 text-zinc-900 rounded md:bg-transparent hover:bg-zinc-100 md:hover:bg-transparent md:border-0 md:hover:text-amber-700 md:p-0 dark:text-zinc-300 md:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 md:dark:hover:bg-transparent"
+            [routerLink]="['/memes/search']"
+            [queryParams]="{ userId: this.authService.getUserId() }"
+            routerLinkActive="{{
+              this.authService.getUserId() ===
+              this.activeRoute.snapshot.queryParams['userId']
+                ? 'bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500'
+                : ''
+            }}"
+            class="block py-2 px-3 text-zinc-900 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            >My Memes</a
+          >
+        </li>
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick()"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            >Create Meme</a
+          >
+        </li>
+        <li
+          class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick('logout')"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-300 lg:text-amber-700 lg:dark:text-amber-500"
+            class="block py-2 px-3 text-zinc-900 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Welcome, {{ this.authService.user() }} (log out)</a
           >
         </li>
+
         }
       </ul>
     </div>

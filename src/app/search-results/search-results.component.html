@@ -1,0 +1,29 @@
+@if(user){
+<h1 class="text-6xl text-center md:text-7xl mt-20 md:mt-10 dark:text-zinc-300">
+  Memes by {{ this.user.user }}
+</h1>
+}
+<section
+  class="h-full min-h-screen flex items-center justify-center {{
+    user ? 'mx-4' : 'm-10'
+  }} md:m-4 dark:text-zinc-300"
+>
+  <div class="h-full w-full flex flex-col items-start justify-center">
+    <app-search-bar class="w-full sticky top-10 z-50"></app-search-bar>
+    <div
+      class="w-full flex flex-wrap justify-center gap-8 md:gap-16 items-start mt-2 md:mt-4"
+    >
+      @for(meme of memes; track meme){
+      <app-meme-card></app-meme-card>
+      }
+    </div>
+    @if(hasMore){
+    <button
+      class="mx-auto rounded-xl bg-amber-600 text-zinc-50 dark:bg-amber-700 p-4 mt-8 font-semibold hover:bg-amber-700 dark:hover:bg-amber-800 transition"
+      (click)="loadMore()"
+    >
+      Show More
+    </button>
+    }
+  </div>
+</section>

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { SortCriteria } from '../../_types/sort-criteria.type';
+import { CommentedMeme, CompletlyEnrichedMeme, EnrichedMeme, EnrichedMemeList, UpdateableMeme } from '../../_types/meme.types';
 
 @Injectable({
   providedIn: 'root'

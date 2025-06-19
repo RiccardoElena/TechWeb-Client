@@ -1,4 +1,6 @@
-interface Comment {
+import { Vote } from "./vote.type";
+
+export interface Comment {
   id: string;
   content: string;
   createdAt: Date;
@@ -11,12 +13,12 @@ interface Comment {
   commentsNumber: number;
 }
 
-interface EnrichedComment extends Comment {
+export interface EnrichedComment extends Comment {
   CommentVotes: boolean[];
   userName: string;
 }
 
-interface CommentedComment {
+export interface CommentedComment {
   data: {
     parent: EnrichedComment;
     replies: EnrichedComment[];
@@ -28,6 +30,6 @@ interface CommentedComment {
   };
 }
 
-interface CommentVote extends Vote {
+export interface CommentVote extends Vote {
   commentId: string;
 }

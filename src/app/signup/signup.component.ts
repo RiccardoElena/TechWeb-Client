@@ -27,7 +27,6 @@ export class SignupComponent {
   })
 
   handleSignup() {
-    console.log("Signup");
     this.submitted = true;
     if (this.signupForm.invalid) {
       this.toastr.error("The data you provided is invalid!", "Oops! Invalid data!");

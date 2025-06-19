@@ -1,4 +1,8 @@
-interface Meme {
+import { EnrichedComment } from './comment.types';
+import { Vote } from './vote.type';
+
+
+export interface Meme {
   id: string;
   title: string;
   fileName: string;
@@ -13,17 +17,18 @@ interface Meme {
   commentsNumber: number;
 }
 
-interface UpdateableMeme {
+export interface UpdateableMeme {
   title?: string;
   description?: string;
   tags?: string[];
 }
 
-interface EnrichedMeme extends Meme {
+export interface EnrichedMeme extends Meme {
   MemeVotes: boolean[];
+  userName: string;
 }
 
-interface EnrichedMemeList {
+export interface EnrichedMemeList {
   data: EnrichedMeme[],
   pagination: {
     page: number,
@@ -32,7 +37,7 @@ interface EnrichedMemeList {
   }
 }
 
-interface CommentedMeme extends EnrichedMeme {
+export interface CommentedMeme extends EnrichedMeme {
   comments: EnrichedComment[];
   commentsPagination: {
     page: number;
@@ -41,10 +46,10 @@ interface CommentedMeme extends EnrichedMeme {
   };
 }
 
-interface MemeVote extends Vote {
+export interface MemeVote extends Vote {
   memeId: string;
 }
 
-interface CompletlyEnrichedMeme extends Meme {
+export interface CompletlyEnrichedMeme extends Meme {
   MemeVotes: MemeVote[];
 }

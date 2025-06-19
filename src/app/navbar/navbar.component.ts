@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DarkModeToggleComponent } from './dark-mode-toggle/dark-mode-toggle.component';
 import { AuthService } from '../_services/auth/local-auth.service';
 import {
@@ -10,9 +10,11 @@ import {
   transition,
   // ...
 } from '@angular/animations';
+import Swal from 'sweetalert2';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
 
+type NavigationEvent = "memeOfTheDay" | "home" | "search" | "profile" | "login" | "logout";
 
 @Component({
   selector: 'app-navbar',
@@ -32,17 +34,24 @@ import { BreakpointObserver } from '@angular/cdk/layout';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-
+  router = inject(Router)
   isMobile = false; //determines whether the screen is mobile or not
   isOpen = false; //determines whether the mobile navbar is toggled or not
   isDropdownOpen = false;
-
+  activeRoute = inject(ActivatedRoute)
   authService = inject(AuthService);
+  memeOfTheDayId = ''; // This will be set to the ID of the meme of the day, if available
+
   constructor(private readonly breakpointObserver: BreakpointObserver) {
-    this.breakpointObserver.observe(['(max-width: 768px)'])
+    this.breakpointObserver.observe(['(max-width: 1024px)'])
       .subscribe(result => {
         this.isMobile = result.matches;
       });
+  }
+
+  ngOnInit() {
+    // TODO: Fetch the meme of the day ID from a service or state management
+    this.memeOfTheDayId = "1234";
   }
   /**
    * Handles user click on the navbar menu toggle on small screens
@@ -54,8 +63,35 @@ export class NavbarComponent {
   /**
    * Closes the toggled navbar when a user clicks on a link
    */
-  handleNavigationClick() {
+  async handleNavigationClick(event?: NavigationEvent) {
     this.isOpen = false;
+    switch (event) {
+      case "memeOfTheDay":
+        this.memeOfTheDayId = Math.random().toString(36).substring(2, 6);
+        // TODO: Fetch the meme of the day ID from a service or state management
+        this.router.navigate(['/memes', this.memeOfTheDayId]);
+        break;
+      case "logout":
+        const response = await Swal.fire({
+          title: 'Are you sure?',
+          text: "You will be logged out and redirected to the homepage.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, log out',
+          cancelButtonText: 'No, stay logged in',
+          customClass: {
+            popup: '!bg-zinc-100 dark:!bg-zinc-800 !text-zinc-800 dark:!text-zinc-300',
+            icon: '!text-red-600 !border-red-600 dark:!text-red-400 dark:!border-red-400',
+            confirmButton: '!bg-red-600 !text-white',
+            cancelButton: '!bg-gray-300 !text-gray-800'
+          }
+        });
+        if (response.isConfirmed) {
+          this.router.navigateByUrl('/logout'); // Navigate to the logout component
+          return; // User cancelled the logout
+        }
+        break;
+    }
   }
 
   toggleDropdown() {

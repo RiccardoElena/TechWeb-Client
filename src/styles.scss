@@ -27,3 +27,5 @@ a.link {
 .form-error{
   @apply text-red-600 dark:text-red-400 text-sm pt-2;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
