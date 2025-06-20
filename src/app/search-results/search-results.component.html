@@ -4,17 +4,17 @@
 </h1>
 }
 <section
-  class="h-full min-h-screen flex items-center justify-center {{
+  class=" flex items-start justify-center my-4 {{
     user ? 'mx-4' : 'm-10'
   }} md:m-4 dark:text-zinc-300"
 >
-  <div class="h-full w-full flex flex-col items-start justify-center">
+  <div class="h-full w-full flex flex-col items-center justify-start">
     <app-search-bar class="w-full sticky top-10 z-50"></app-search-bar>
     <div
       class="w-full flex flex-wrap justify-center gap-8 md:gap-16 items-start mt-2 md:mt-4"
     >
       @for(meme of memes; track meme){
-      <app-meme-card></app-meme-card>
+      <app-meme-card [inputMeme]="meme"></app-meme-card>
       }
     </div>
     @if(hasMore){

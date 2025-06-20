@@ -13,6 +13,7 @@ import {
 import Swal from 'sweetalert2';
 
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { MemesService } from '../_services/meme/memes.service';
 
 type NavigationEvent = "memeOfTheDay" | "home" | "search" | "profile" | "login" | "logout";
 
@@ -40,6 +41,7 @@ export class NavbarComponent {
   isDropdownOpen = false;
   activeRoute = inject(ActivatedRoute)
   authService = inject(AuthService);
+  memeService = inject(MemesService);
   memeOfTheDayId = ''; // This will be set to the ID of the meme of the day, if available
 
   constructor(private readonly breakpointObserver: BreakpointObserver) {
@@ -47,11 +49,6 @@ export class NavbarComponent {
       .subscribe(result => {
         this.isMobile = result.matches;
       });
-  }
-
-  ngOnInit() {
-    // TODO: Fetch the meme of the day ID from a service or state management
-    this.memeOfTheDayId = "1234";
   }
   /**
    * Handles user click on the navbar menu toggle on small screens
@@ -63,13 +60,24 @@ export class NavbarComponent {
   /**
    * Closes the toggled navbar when a user clicks on a link
    */
-  async handleNavigationClick(event?: NavigationEvent) {
+  async handleNavigationClick(navigationEvent?: NavigationEvent, event?: MouseEvent) {
+    if (event) {
+      event.preventDefault(); // Prevent default link behavior
+      event.stopPropagation(); // Stop the event from propagating further
+    }
     this.isOpen = false;
-    switch (event) {
+    switch (navigationEvent) {
       case "memeOfTheDay":
-        this.memeOfTheDayId = Math.random().toString(36).substring(2, 6);
-        // TODO: Fetch the meme of the day ID from a service or state management
-        this.router.navigate(['/memes', this.memeOfTheDayId]);
+        this.memeService.getMemeOfTheDayId().subscribe({
+          next: (memeId) => {
+            console.log('Meme of the day ID:', memeId);
+            this.memeOfTheDayId = memeId;
+            this.router.navigate(['/memes', memeId]);
+          },
+          error: (error) => {
+            console.error('Error fetching meme of the day ID:', error);
+          }
+        });
         break;
       case "logout":
         const response = await Swal.fire({

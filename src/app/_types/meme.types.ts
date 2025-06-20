@@ -1,5 +1,5 @@
 import { EnrichedComment } from './comment.types';
-import { Vote } from './vote.type';
+import { SimpleVote, Vote } from './vote.type';
 
 
 export interface Meme {
@@ -24,8 +24,11 @@ export interface UpdateableMeme {
 }
 
 export interface EnrichedMeme extends Meme {
-  MemeVotes: boolean[];
-  userName: string;
+  MemeVotes: SimpleVote[];
+  User: {
+    id: string;
+    userName: string;
+  }
 }
 
 export interface EnrichedMemeList {
@@ -39,6 +42,7 @@ export interface EnrichedMemeList {
 
 export interface CommentedMeme extends EnrichedMeme {
   comments: EnrichedComment[];
+
   commentsPagination: {
     page: number;
     limit: number;

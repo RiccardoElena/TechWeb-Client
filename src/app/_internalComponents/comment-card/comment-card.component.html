@@ -1,23 +1,65 @@
-<div class="w-full mb-4 p-4 border-b border-zinc-200 dark:border-zinc-700">
+<div
+  class="relative w-full mb-4 p-4 border-b border-zinc-200 dark:border-zinc-700"
+>
   <p class="text-sm text-zinc-500 dark:text-zinc-400">
     by
     <a
       class="underline hover:text-amber-500"
       [routerLink]="['/memes/search']"
-      [queryParams]="{ userId: comment().UserId }"
-      >{{ comment().userName }}</a
+      [queryParams]="{ userId: this.comment()?.User?.id }"
+      >{{ this.comment()?.User?.userName }}</a
     >
   </p>
+  @if(this.authService.getUserId() === comment()?.User?.id){
+  <button
+    class="absolute top-4 right-4 text-zinc-500 hover:text-red-500"
+    type="button"
+    (click)="deleteComment($event)"
+  >
+    <fa-icon [icon]="icons.delete"></fa-icon>
+  </button>
+  <button
+    class="absolute top-4 right-12 {{
+      isEditing ? 'text-amber-500' : 'text-zinc-500'
+    }} hover:text-amber-500"
+    type="button"
+    (click)="editComment($event)"
+  >
+    <fa-icon [icon]="icons.edit"></fa-icon>
+  </button>
+  } @if(isEditing){
+  <div (click)="captureClick($event)" class="mt-4">
+    <div class="flex justify-center text-md">
+      <textarea
+        rows="3"
+        [(ngModel)]="newComment"
+        (keyup.enter)="submitEditedComment($event)"
+        (keydown.escape)="isEditing = false"
+        placeholder="Leave a comment..."
+        class="w-full px-4 py-2 rounded-l-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-zinc-300"
+      >
+      </textarea>
+      <button
+        class="px-4 py-2 rounded-r-lg bg-amber-600 text-zinc-50 font-semibold hover:bg-amber-700 transition"
+        type="button"
+        (click)="submitEditedComment($event)"
+      >
+        Send
+      </button>
+    </div>
+  </div>
+  } @else{
   <p
     class="mb-2 text-md text-zinc-900 dark:text-zinc-300 line-clamp-3 break-all whitespace-normal"
   >
-    {{ comment().content }}
+    {{ this.comment()?.content }}
   </p>
+  }
   <app-card-info
-    [vote]="comment().CommentVotes[0]"
-    [upvotesNumber]="comment().upvotesNumber"
-    [downvotesNumber]="comment().downvotesNumber"
-    [commentsNumber]="comment().commentsNumber"
+    [vote]="liked()"
+    [upvotesNumber]="this.comment()?.upvotesNumber || 0"
+    [downvotesNumber]="this.comment()?.downvotesNumber || 0"
+    [commentsNumber]="this.comment()?.commentsNumber || 0"
     (upvoteClick)="handleUpvoteClick()"
     (downvoteClick)="handleDownvoteClick()"
     (commentTextSubmit)="handleCommentSubmit($event)"

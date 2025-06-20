@@ -1,4 +1,4 @@
-import { Vote } from "./vote.type";
+import { SimpleVote, Vote } from "./vote.type";
 
 export interface Comment {
   id: string;
@@ -14,8 +14,11 @@ export interface Comment {
 }
 
 export interface EnrichedComment extends Comment {
-  CommentVotes: boolean[];
-  userName: string;
+  CommentVotes: SimpleVote[];
+  User: {
+    id: string;
+    userName: string;
+  };
 }
 
 export interface CommentedComment {

@@ -48,11 +48,11 @@
     class="  rounded-lg {{
       extended()
         ? 'relative'
-        : 'w-8/10 xs:w-7/10 md:w-6/10 z-30 absolute top-3/4 left-1/2 transform -translate-x-1/2'
-    }}  bg-zinc-50 dark:bg-zinc-800 shadow-md p-4"
+        : 'w-full md:w-8/10 xs:w-7/10 md:w-6/10 z-30 absolute top-3/4 left-1/2 transform -translate-x-1/2'
+    }}  bg-zinc-50 dark:bg-zinc-800 shadow-xl p-4"
   >
     <button
-      class="absolute w-8 h-8 flex items-center justify-center border-1 hover:bg-red-500 border-red-500 rounded-full top-2 right-4 text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 bg-white dark:bg-zinc-800"
+      class="absolute w-8 h-8 flex items-center justify-center border-1 text-red-200 hover:text-white hover:bg-red-500 border-red-500 rounded-full top-2 right-4 hover:text-zinc-800 dark:hover:text-zinc-300 bg-white dark:bg-zinc-800"
       type="button"
       (click)="advancedMode = false"
     >
@@ -77,34 +77,35 @@
         <option value="commentsNumber,ASC">Least Comments</option>
       </select>
     </div>
-    <div class="max-w-lg mx-auto mb-4">
-      <label for="tagInput" class="block mb-2 font-semibold"
-        >Tags (divide with commas or spaces):</label
+    <div class="mx-auto max-w-lg m-4 w-full">
+      <label for="tagInput" class="block mb-2 font-semibold text-zinc-300">
+        Tags (divide with commas or spaces):</label
       >
-
       <div
-        class="flex flex-wrap items-center gap-2 border border-zinc-300 dark:border-zinc-600 px-3 py-2 rounded-lg dark:bg-zinc-800"
+        class="flex items-center gap-2 border border-zinc-300 dark:border-zinc-600 pl-3 rounded-lg dark:bg-zinc-800"
       >
-        @for (tag of tags; track tag; let i = $index) {
-        <span
-          class="bg-amber-600 text-zinc-50 px-2 py-1 rounded-full text-sm flex items-center gap-1"
+        <div
+          class="flex overflow-x-auto whitespace-nowrap w-62/100 md:w-9/10 items-center gap-2 pl-2"
         >
-          {{ tag }}
-          <button type="button" (click)="removeTag(i)" class="text-xs ml-1">
-            &times;
-          </button> </span
-        >}
+          @for (tag of tags; track tag; let i = $index) {
+          <span
+            class="bg-amber-600 text-zinc-50 px-2 py-1 rounded-full text-sm flex items-center gap-1"
+          >
+            {{ tag }}
+            <button type="button" (click)="removeTag(i)" class="text-xs ml-1">
+              &times;
+            </button> </span
+          >}
+          <input
+            [(ngModel)]="inputValue"
+            (keydown)="handleKey($event)"
+            placeholder="Add tags..."
+            class="flex-1 text-md border-none bg-transparent focus:outline-none dark:text-zinc-300"
+          />
+        </div>
 
-        <input
-          [(ngModel)]="inputValue"
-          (keydown)="handleKey($event)"
-          placeholder="Add tags..."
-          class="flex-1 text-md border-none bg-transparent focus:outline-none dark:text-zinc-300"
-        />
-      </div>
-      <div class="w-full flex items-center justify-center mt-4">
         <button
-          class="px-4 py-2 text-md rounded-lg bg-red-500 text-zinc-50 font-semibold hover:bg-red-600 transition mr-2"
+          class="px-4 py-2 w-1/2 md:w-1/10 text-md rounded-r-lg bg-red-500 text-zinc-50 font-semibold hover:bg-red-600 transition"
           type="button"
           (click)="tags = []; inputValue = ''"
         >

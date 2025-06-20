@@ -55,7 +55,7 @@
           }}"
         >
           <a
-            (click)="handleNavigationClick('memeOfTheDay')"
+            (click)="handleNavigationClick('memeOfTheDay', $event)"
             [routerLink]="['/memes', memeOfTheDayId]"
             routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
             class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
@@ -125,6 +125,7 @@
         >
           <a
             (click)="handleNavigationClick()"
+            routerLink="/memes/create"
             routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
             class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Create Meme</a

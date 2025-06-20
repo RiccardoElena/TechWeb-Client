@@ -39,7 +39,7 @@ export class MemesService {
     return this.http.get<EnrichedMemeList>(`${this.API_URL}${this.BASE_PATH}`, { ...this.httpOptions, params });
   }
 
-  getMemeById(id: number, commentsPage: number = 0, commentsLimit: number = 10) {
+  getMemeById(id: string, commentsPage: number = 0, commentsLimit: number = 10) {
     const params = new HttpParams()
       .set('commentsPage', commentsPage)
       .set('commentsLimit', commentsLimit);
@@ -47,11 +47,15 @@ export class MemesService {
     return this.http.get<CommentedMeme>(`${this.API_URL}${this.BASE_PATH}/${id}`, { ...this.httpOptions, params });
   }
 
-  voteMeme(id: number, isUpvote: boolean) {
-    return this.http.post<CompletlyEnrichedMeme>(`${this.API_URL}${this.BASE_PATH}/${id}/vote`, { isUpvote }, this.httpOptions);
+  getMemeOfTheDayId() {
+    return this.http.get<string>(`${this.API_URL}${this.BASE_PATH}/meme-of-the-day/id`, this.httpOptions);
   }
 
-  unvoteMeme(id: number) {
+  voteMeme(id: string, isUpvote: boolean) {
+    return this.http.put<CompletlyEnrichedMeme>(`${this.API_URL}${this.BASE_PATH}/${id}/vote`, { isUpvote }, this.httpOptions);
+  }
+
+  unvoteMeme(id: string) {
     return this.http.delete<CompletlyEnrichedMeme>(`${this.API_URL}${this.BASE_PATH}/${id}/vote`, this.httpOptions);
   }
 
@@ -59,11 +63,11 @@ export class MemesService {
     return this.http.post(`${this.API_URL}${this.BASE_PATH}`, meme);
   }
 
-  updateMeme(id: number, meme: UpdateableMeme) {
+  updateMeme(id: string, meme: UpdateableMeme) {
     return this.http.put<EnrichedMeme>(`${this.API_URL}${this.BASE_PATH}/${id}`, meme, this.httpOptions);
   }
 
-  deleteMeme(id: number) {
+  deleteMeme(id: string) {
     return this.http.delete(`${this.API_URL}${this.BASE_PATH}/${id}`, this.httpOptions);
   }
 }

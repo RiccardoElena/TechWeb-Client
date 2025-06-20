@@ -48,12 +48,15 @@ export class AuthService {
     const user = decodedToken.userName;
     const userId = decodedToken.userId;
 
+
     this.authState.set({
       userId: userId,
       user: user,
       token: token,
       isAuthenticated: this.verifyToken(token)
     })
+
+    console.log("Token updated:", this.authState());
   }
 
   getToken() {

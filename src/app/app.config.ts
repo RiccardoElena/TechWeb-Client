@@ -6,6 +6,7 @@ import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './_interceptors/auth/auth.interceptor';
+import { unauthorizedInterceptor } from './_interceptors/unauthorized/unauthorized.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(
       withFetch(), //use the Fetch API instead of XMLHttpRequests
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor, unauthorizedInterceptor])
     ),
-    provideRouter(routes)]
+    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }))]
 };

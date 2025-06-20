@@ -1,7 +1,8 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faComment, faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class CardInfoComponent {
 
+  toastr = inject(ToastrService);
 
   isCommenting = false;
   commentText = '';
@@ -34,6 +36,7 @@ export class CardInfoComponent {
 
 
   commentClicked(event: Event) {
+
     event.stopPropagation();
     this.isCommenting = !this.isCommenting;
   }
@@ -44,7 +47,7 @@ export class CardInfoComponent {
 
   upvoteClicked(event: Event) {
     event.stopPropagation();
-    console.log('Upvote clicked');
+
     this.upvoteClick.emit();
   }
 
@@ -54,6 +57,8 @@ export class CardInfoComponent {
       this.commentTextSubmit.emit(this.commentText.trim());
       this.commentText = '';
       this.isCommenting = false;
+    } else {
+      this.toastr.error('Comment cannot be empty', 'Error');
     }
   }
 

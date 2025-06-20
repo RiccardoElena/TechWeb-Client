@@ -1,13 +1,13 @@
 <div
   (click)="captureCardInfoClick($event)"
-  class="flex justify-between items-center text-zinc-900 dark:text-zinc-300"
+  class="flex sm:justify-start flex-wrap justify-end items-center text-zinc-900 dark:text-zinc-300"
 >
   <div
-    class="h-full flex flex-row gap-4 justify-start items-center w-2/3 overflow-x-auto mr-2"
+    class="h-full flex flex-row gap-4 justify-start items-center w-full sm:w-2/3 overflow-x-auto"
   >
     @for(tag of tags(); track tag) {
     <span
-      class="my-2 inline-block bg-amber-600 dark:bg-amber-700 text-zinc-50 dark:text-zinc-50 px-2 py-1 rounded-full text-xs font-semibold mr-2"
+      class="my-2 w-fit whitespace-nowrap inline-block bg-amber-600 dark:bg-amber-700 text-zinc-50 dark:text-zinc-50 px-2 py-1 rounded-full text-xs font-semibold"
     >
       {{ tag }}
     </span>

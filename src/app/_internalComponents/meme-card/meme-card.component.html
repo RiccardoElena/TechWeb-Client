@@ -1,6 +1,6 @@
 <div
   (click)="expandCard()"
-  class="w-full shadow-2xl relative max-w-sm md:max-w-md border rounded-lg p-4 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800"
+  class="w-[90vw] sm:h-[55vh] shadow-2xl relative md:max-w-md border rounded-lg p-4 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800"
 >
   <p class="text-sm text-zinc-500 dark:text-zinc-400">
     by
@@ -8,12 +8,12 @@
       (click)="preventDefaultLink($event)"
       class="underline hover:text-amber-500"
       [routerLink]="['/memes/search']"
-      [queryParams]="{ userId: meme.userId }"
-      >{{ meme.userName }}</a
+      [queryParams]="{ userId: meme.User.id }"
+      >{{ meme.User.userName }}</a
     >
   </p>
   <h3 class="mb-2">{{ meme.title }}</h3>
-  @if(this.authService.getUserId() === meme.userId){
+  @if(this.authService.getUserId() === meme.User.id){
   <button
     class="absolute top-6 right-4 text-zinc-500 hover:text-red-500"
     type="button"
@@ -29,17 +29,19 @@
     <fa-icon [icon]="icons.edit"></fa-icon>
   </button>
   }
-  <img
-    class="w-full h-auto rounded-lg"
-    [src]="meme.filePath"
-    [alt]="meme.title"
-  />
+  <div class="w-full flex justify-center">
+    <img
+      class="w-auto h-auto sm:h-[30vh] rounded-lg"
+      [src]="meme.filePath"
+      [alt]="meme.title"
+    />
+  </div>
   <p class="my-2 max-w-md line-clamp-3 break-all whitespace-normal">
     {{ meme.description }}
   </p>
   <app-card-info
     [tags]="meme.tags || []"
-    [vote]="meme.MemeVotes[0]"
+    [vote]="this.liked()"
     [upvotesNumber]="meme.upvotesNumber"
     [downvotesNumber]="meme.downvotesNumber"
     [commentsNumber]="meme.commentsNumber"

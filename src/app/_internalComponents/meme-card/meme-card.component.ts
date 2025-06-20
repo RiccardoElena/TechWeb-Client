@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { EnrichedMeme } from '../../_types/meme.types';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,8 @@ import { AuthService } from '../../_services/auth/local-auth.service';
 import { CardInfoComponent } from "../card-info/card-info.component";
 import { faTrash, faPencil } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { MemesService } from '../../_services/meme/memes.service';
+import { CommentsService } from '../../_services/comments/comments.service';
 
 @Component({
   selector: 'app-meme-card',
@@ -20,9 +22,19 @@ export class MemeCardComponent {
   meme: EnrichedMeme;
   constructor() {
     effect(() => {
-      this.meme = this.inputMeme();
+      const inputMeme = this.inputMeme();
+      console.log('Input meme changed:', inputMeme);
+      if (inputMeme) {
+        this.meme = inputMeme;
+        if (this.meme.MemeVotes && this.meme.MemeVotes.length > 0) {
+          this.liked.set(inputMeme.MemeVotes[0].isUpvote);
+        } else {
+          this.liked.set(undefined);
+        }
+      }
     });
   }
+
   icons = {
     delete: faTrash,
     edit: faPencil
@@ -30,24 +42,12 @@ export class MemeCardComponent {
 
   router = inject(Router);
   authService = inject(AuthService);
-  // dialogService = inject(DialogService)
+  memeService = inject(MemesService);
+  commentService = inject(CommentsService);
 
-  inputMeme = input<EnrichedMeme>({
-    id: '1234',
-    title: 'Great Meme',
-    fileName: 'great-meme.jpg',
-    filePath: '/assets/placeholder.jpeg',
-    description: 'lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    tags: ['funny', 'meme', 'trending', 'popular', 'new', 'cool', 'awesome'],
-    userId: 'a6633dba-8e0a-4d21-9b00-4e01cc66269b',
-    upvotesNumber: 10,
-    downvotesNumber: 2,
-    commentsNumber: 5,
-    MemeVotes: [],
-    userName: 'John Doe'
-  });
+
+  inputMeme = input<EnrichedMeme>();
+  liked = signal<boolean | undefined>(undefined);
 
   async deleteMeme($event: MouseEvent) {
     $event.stopPropagation();
@@ -66,21 +66,44 @@ export class MemeCardComponent {
       }
     });
 
-    console.log(result);
+    if (result.isConfirmed) {
+      this.memeService.deleteMeme(this.meme.id).subscribe({
+        next: () => {
+          Swal.fire({
+            title: 'Deleted!',
+            text: `The meme "${this.meme.title}" has been deleted successfully.`,
+            icon: 'success',
+            customClass: {
+              popup: '!bg-zinc-100 dark:!bg-zinc-800 !text-zinc-800 dark:!text-zinc-300',
+              confirmButton: '!bg-green-600 !text-white'
+            }
+          }).then(() => {
+            this.router.navigate([this.router.url]);
+          });
+        },
+        error: (error) => {
+          console.error('Error deleting meme:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: `An error occurred while deleting the meme`,
+            icon: 'error',
+            customClass: {
+              popup: '!bg-zinc-100 dark:!bg-zinc-800 !text-zinc-800 dark:!text-zinc-300',
+              confirmButton: '!bg-red-600 !text-white'
+            }
+          });
+        }
+      });
 
-    // this.dialogService.confirm(`Delete ${this.meme.title}?`).subscribe((confirmed) => {
-    //   if (confirmed) {
-    //     console.log('Meme deleted:', this.meme.id);
-    //   }
-    // });
-    // call the service to delete the meme
+    }
+
+    console.log(result);
 
   }
 
   editMeme($event: MouseEvent) {
     $event.stopPropagation();
-    // call the service to edit the meme
-    console.log('Meme edited:', this.meme.id);
+    this.router.navigate(['/memes', this.meme.id, 'edit']);
   }
 
   preventDefaultLink(event: MouseEvent) {
@@ -90,23 +113,32 @@ export class MemeCardComponent {
 
   voteMeme(vote: boolean) {
     // call the service to vote the meme
-    if (vote) {
-      this.meme.upvotesNumber++;
-    }
-    else {
-      this.meme.downvotesNumber++;
-    }
-    if (this.meme.MemeVotes[0] === false) {
-      this.meme.downvotesNumber--;
-    } else if (this.meme.MemeVotes[0] === true) {
-      this.meme.upvotesNumber--;
-    }
-    this.meme.MemeVotes[0] = vote;
+    this.memeService.voteMeme(this.meme.id, vote).subscribe({
+      next: (updatedMeme) => {
+        if (vote) {
+          this.meme.upvotesNumber++;
+        }
+        else {
+          this.meme.downvotesNumber++;
+        }
+        if (this.liked() === false) {
+          this.meme.downvotesNumber--;
+        } else if (this.liked() === true) {
+          this.meme.upvotesNumber--;
+        }
+        this.liked.set(vote);
+        console.log('Meme voted successfully:', updatedMeme);
+      },
+      error: (error) => {
+        console.error('Error voting meme:', error);
+      }
+    });
+
   }
 
   handleUpvoteClick() {
 
-    if (this.meme.MemeVotes[0]) {
+    if (this.liked()) {
       this.unvoteMeme();
     } else {
       this.voteMeme(true);
@@ -115,7 +147,7 @@ export class MemeCardComponent {
 
   handleDownvoteClick() {
 
-    if (this.meme.MemeVotes[0] === false) {
+    if (this.liked() === false) {
       this.unvoteMeme();
     } else {
       this.voteMeme(false);
@@ -123,27 +155,39 @@ export class MemeCardComponent {
   }
 
   unvoteMeme() {
+    this.memeService.unvoteMeme(this.meme.id).subscribe({
+      next: () => {
+        if (this.liked() === false) {
+          this.meme.downvotesNumber--;
+        } else if (this.liked() === true) {
+          this.meme.upvotesNumber--;
+        }
+        this.liked.set(undefined);
+      },
+      error: (error) => {
+        console.error('Error unvoting meme:', error);
+      }
+    });
 
-    // call the service to unvote the meme
-    if (this.meme.MemeVotes[0] === false) {
-      this.meme.downvotesNumber--;
-    } else if (this.meme.MemeVotes[0] === true) {
-      this.meme.upvotesNumber--;
-    }
-    this.meme.MemeVotes = [];
   }
 
-
-
   handleCommentSubmit(comment: string) {
-
-    if (comment.trim() === '') {
+    const trimmedComment = comment.trim();
+    if (trimmedComment === '') {
       return; // Do not submit empty comments
     }
-    // Here you would typically call a service to submit the comment
+
+    this.commentService.createComment(this.meme.id, trimmedComment).subscribe({
+      next: (newComment) => {
+        console.log('Comment submitted:', newComment);
+        this.meme.commentsNumber++; // Increment the comments count
+      },
+      error: (error) => {
+        console.error('Error submitting comment:', error);
+      }
+    });
+
     console.log('Comment submitted:', comment);
-    this.meme.commentsNumber++; // Increment the comments count
-    // TODO: send the comment to the server
   }
 
   expandCard() {
