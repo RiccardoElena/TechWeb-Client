@@ -1,12 +1,12 @@
 import { Component, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SortCriteria, SortBy, SortDirection } from '../../_types/sort-criteria.type';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faClose, faFilter } from '@fortawesome/free-solid-svg-icons';
 
 
-type SearchFn = (router: Router, tags: string[], searchQuery: string, sortCriteria: SortCriteria, userId?: string) => void;
+export type SearchFn = (router: Router, tags: string[], searchQuery: string, sortCriteria: SortCriteria, userId?: string) => void;
 
 @Component({
   selector: 'app-search-bar',
@@ -27,6 +27,7 @@ export class SearchBarComponent {
   advancedMode = false;
   selectedOrder: `${SortBy},${SortDirection}` = 'createdAt,DESC';
   searchQuery = '';
+  route = inject(ActivatedRoute);
 
   handleKey(event: KeyboardEvent) {
     const key = event.key;
@@ -42,7 +43,7 @@ export class SearchBarComponent {
 
   searchMemes() {
     const [sortBy, sortDirection] = this.selectedOrder.split(',') as [SortBy, SortDirection];
-
+    const userId = this.route.snapshot.queryParamMap.get('userId') || undefined;
     this.onSearch()?.(
       this.router,
       this.tags,
@@ -51,6 +52,7 @@ export class SearchBarComponent {
         sortedBy: sortBy,
         sortDirection: sortDirection
       }
+      , userId
     );
   }
 

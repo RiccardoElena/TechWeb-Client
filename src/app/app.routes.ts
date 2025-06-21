@@ -9,6 +9,7 @@ import { MemeCloseUpComponent } from './meme-close-up/meme-close-up.component';
 import { CreateMemeComponent } from './create-meme/create-meme.component';
 
 import { MemeFormComponent } from './meme-form/meme-form.component';
+import { CommentCloseUpComponent } from './comment-close-up/comment-close-up.component';
 
 
 export const routes: Routes = [
@@ -49,8 +50,11 @@ export const routes: Routes = [
     path: "memes/:id",
     component: MemeCloseUpComponent,
     title: "Meme details | TechWeb Meme Museum",
-  },
-  {
+  }, {
+    path: "memes/:memeId/comments/:commentId",
+    component: CommentCloseUpComponent,
+    title: "Comment details | TechWeb Meme Museum"
+  }, {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',

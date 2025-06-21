@@ -54,7 +54,7 @@ export class CommentCardComponent {
 
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to delete the comment "${this.comment()?.content}"? This action cannot be undone.`,
+      text: `Do you want to delete the comment "${this.clampDescription(this.comment()?.content)}"? This action cannot be undone.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -78,7 +78,7 @@ export class CommentCardComponent {
         next: () => {
           Swal.fire({
             title: 'Deleted!',
-            text: `The comment "${comment.content}" has been deleted successfully.`,
+            text: `The comment "${this.clampDescription(comment.content)}" has been deleted successfully.`,
             icon: 'success',
             customClass: {
               popup: '!bg-zinc-100 dark:!bg-zinc-800 !text-zinc-800 dark:!text-zinc-300',
@@ -106,6 +106,12 @@ export class CommentCardComponent {
 
     console.log(result);
 
+  }
+  clampDescription(text: string | undefined, maxLength: number = 100): string {
+    if (!text) return '';
+    const a = text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    console.log('Clamped description:', a);
+    return a;
   }
 
   captureClick(event: MouseEvent) {
@@ -244,5 +250,10 @@ export class CommentCardComponent {
 
   }
 
-
+  expandComment(event: MouseEvent) {
+    event.stopPropagation();
+    const comment = this.comment();
+    if (!comment) { return; }
+    this.router.navigate(['/memes', comment.MemeId, 'comments', comment.id]);
+  }
 }

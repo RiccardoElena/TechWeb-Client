@@ -23,7 +23,7 @@ export class MemeCardComponent {
   constructor() {
     effect(() => {
       const inputMeme = this.inputMeme();
-      console.log('Input meme changed:', inputMeme);
+
       if (inputMeme) {
         this.meme = inputMeme;
         if (this.meme.MemeVotes && this.meme.MemeVotes.length > 0) {

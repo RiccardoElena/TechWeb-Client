@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommentedMeme } from '../_types/meme.types';
 import { CardInfoComponent } from "../_internalComponents/card-info/card-info.component";
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CommentCardComponent } from '../_internalComponents/comment-card/comment-card.component';
+
 import { Location } from '@angular/common';
 import { faClose, faTrash, faPencil } from '@fortawesome/free-solid-svg-icons';
 import { MemesService } from '../_services/meme/memes.service';
@@ -12,10 +12,11 @@ import { EnrichedComment } from '../_types/comment.types';
 import { CommentsService } from '../_services/comments/comments.service';
 import { AuthService } from '../_services/auth/local-auth.service';
 import Swal from 'sweetalert2';
+import { CommentListComponent } from '../_internalComponents/comment-list/comment-list.component';
 
 @Component({
   selector: 'app-meme-close-up',
-  imports: [CardInfoComponent, CommentCardComponent, FontAwesomeModule],
+  imports: [CardInfoComponent, CommentListComponent, FontAwesomeModule, CommentListComponent],
   templateUrl: './meme-close-up.component.html',
   styleUrl: './meme-close-up.component.scss'
 })
@@ -51,27 +52,38 @@ export class MemeCloseUpComponent {
 
 
   ngOnInit() {
-    const memeId = this.route.snapshot.paramMap.get('id');
-
-    console.log('Meme ID:', memeId);
-
-    this.memeService.getMemeById(memeId!).subscribe({
-      next: (meme) => {
-        this.meme = meme;
-        this.commentCurrentPage.set(this.meme.commentsPagination.page + 1);
-        this.commentPageSize.set(this.meme.commentsPagination.limit);
-        this.comments.set(this.meme.comments);
-        this.liked.set(this.meme.MemeVotes[0]?.isUpvote);
-        console.log('like', this.liked());
-        this.totalNumberOfComments.set(this.meme.commentsPagination.totalCount);
-        this.titleService.setTitle(`${this.meme.title}| TechWeb Meme Museum`);
-        console.log('Fetched meme:', this.meme);
+    this.route.params.subscribe({
+      next: (params) => {
+        const id = params['id'];
+        console.log(id);
+        if (id) {
+          console.log('Meme ID from query params:', id);
+          this.memeService.getMemeById(id).subscribe({
+            next: (meme) => {
+              this.meme = meme;
+              this.commentCurrentPage.set(this.meme.commentsPagination.page + 1);
+              this.commentPageSize.set(this.meme.commentsPagination.limit);
+              this.comments.set(this.meme.comments);
+              this.liked.set(this.meme.MemeVotes[0]?.isUpvote);
+              this.totalNumberOfComments.set(this.meme.commentsPagination.totalCount);
+              this.titleService.setTitle(`${this.meme.title} | TechWeb Meme Museum`);
+            },
+            error: (error) => {
+              console.error('Error fetching meme:', error);
+              this.router.navigate(['/404']); // Navigate to a 404 page if meme not found
+            }
+          });
+        } else {
+          console.error('No meme ID provided in query params');
+          this.router.navigate(['/404']); // Navigate to a 404 page if no ID is provided
+        }
       },
       error: (error) => {
-        console.error('Error fetching meme:', error);
-        this.router.navigate(['/404']); // Navigate to a 404 page if meme not found
+        console.error('Error reading query params:', error);
+        this.router.navigate(['/404']); // Navigate to a 404 page if there's an error
       }
     });
+
 
   }
 
@@ -83,6 +95,13 @@ export class MemeCloseUpComponent {
     this.showFullDcp = !this.showFullDcp;
   }
 
+  clampDescription(text: string, maxLength: number = 100): string {
+    if (!text) return '';
+    const a = text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
+    console.log('Clamped description:', a);
+    return a;
+  }
+
   async deleteMeme($event: MouseEvent) {
     $event.stopPropagation();
     if (!this.meme) {
@@ -90,7 +109,7 @@ export class MemeCloseUpComponent {
     }
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to delete the meme "${this.meme.title}"? This action cannot be undone.`,
+      text: `Do you want to delete the meme "${this.clampDescription(this.meme.title)}"? This action cannot be undone.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -111,7 +130,7 @@ export class MemeCloseUpComponent {
           }
           Swal.fire({
             title: 'Deleted!',
-            text: `The meme "${this.meme.title}" has been deleted successfully.`,
+            text: `The meme "${this.clampDescription(this.meme.title)}" has been deleted successfully.`,
             icon: 'success',
             customClass: {
               popup: '!bg-zinc-100 dark:!bg-zinc-800 !text-zinc-800 dark:!text-zinc-300',

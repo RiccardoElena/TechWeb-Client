@@ -32,6 +32,10 @@ export interface EnrichedMeme extends Meme {
 }
 
 export interface EnrichedMemeList {
+  user?: {
+    userId: string;
+    userName: string;
+  },
   data: EnrichedMeme[],
   pagination: {
     page: number,

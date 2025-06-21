@@ -24,17 +24,17 @@ export class MemesService {
     page: number = 0,
     limit: number = 10
   ) {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('sortedBy', sortCriteria.sortedBy)
       .set('sortDirection', sortCriteria.sortDirection)
       .set('page', page)
       .set('limit', limit);
+    console.log('User ID:', userId);
+    if (userId) { params = params.set('userId', userId); }
 
-    if (userId) { params.set('userId', userId); }
+    if (title && title.trim() !== '') { params = params.set('title', title); }
 
-    if (title && title.trim() !== '') { params.set('title', title); }
-
-    if (tags && tags.length > 0) { params.set('tags', tags.join(',')); }
+    if (tags && tags.length > 0) { params = params.set('tags', tags.join(',')); }
 
     return this.http.get<EnrichedMemeList>(`${this.API_URL}${this.BASE_PATH}`, { ...this.httpOptions, params });
   }

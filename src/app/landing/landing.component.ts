@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { SearchBarComponent } from '../_internalComponents/search-bar/search-bar.component';
 import { SortCriteria } from '../_types/sort-criteria.type';
 
-interface SearchQuery {
+export interface SearchQuery {
   tags?: string;
   query?: string;
   sortBy?: string;

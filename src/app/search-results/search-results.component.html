@@ -1,20 +1,35 @@
 @if(user){
-<h1 class="text-6xl text-center md:text-7xl mt-20 md:mt-10 dark:text-zinc-300">
-  Memes by {{ this.user.user }}
+<h1
+  class="p-4 text-6xl text-center md:text-7xl mt-20 md:mt-10 dark:text-zinc-300 truncate"
+>
+  Memes by
+  <a
+    class="italic hover:text-amber-500"
+    [routerLink]="['/memes/search']"
+    [queryParams]="{ userId: user.userId }"
+    >{{ this.user.userName }}</a
+  >
 </h1>
 }
 <section
-  class=" flex items-start justify-center my-4 {{
+  class=" min-h-screen flex items-start justify-center my-4 {{
     user ? 'mx-4' : 'm-10'
   }} md:m-4 dark:text-zinc-300"
 >
   <div class="h-full w-full flex flex-col items-center justify-start">
-    <app-search-bar class="w-full sticky top-10 z-50"></app-search-bar>
+    <app-search-bar
+      class="w-full sticky top-10 z-50"
+      [onSearch]="onSearch"
+    ></app-search-bar>
     <div
       class="w-full flex flex-wrap justify-center gap-8 md:gap-16 items-start mt-2 md:mt-4"
     >
       @for(meme of memes; track meme){
       <app-meme-card [inputMeme]="meme"></app-meme-card>
+      } @empty {
+      <div class="text-center text-lg text-zinc-500 dark:text-zinc-400">
+        No memes found.
+      </div>
       }
     </div>
     @if(hasMore){

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EnrichedComment } from '../../_types/comment.types';
+import { CommentedComment, EnrichedComment } from '../../_types/comment.types';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class CommentsService {
   getReplies(memeId: string, commentId: string, page: number = 0, limit: number = 10) {
     const url = `${this.API_URL}${this.BASE_PATH}/${memeId}${this.COMMENTS_PATH}/${commentId}/replies`;
     const params = { page: page.toString(), limit: limit.toString() };
-    return this.http.get(url, { ...this.httpOptions, params });
+    return this.http.get<CommentedComment>(url, { ...this.httpOptions, params });
   }
 
   createComment(memeId: string, content: string, parentId?: string) {
