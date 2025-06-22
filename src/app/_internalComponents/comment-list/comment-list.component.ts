@@ -16,16 +16,16 @@ export class CommentListComponent {
   loadMoreComments = output<void>();
 
   constructor() {
-    console.log('CommentListComponent initialized with comments:', this.comments());
+
   }
 
   deleteComment(commentId: string) {
-    console.log('Deleting comment with ID:', commentId);
+
     this.commentDeleted.emit(commentId);
   }
 
   loadMore() {
-    console.log('Loading more comments...');
+
     this.loadMoreComments.emit();
   }
 

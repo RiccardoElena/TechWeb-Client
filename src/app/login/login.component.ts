@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../_services/auth/local-auth.service';
+import { Location } from '@angular/common';
 import { RemoteAuthService } from '../_services/auth/remote-auth.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class LoginComponent {
   router = inject(Router);
   remoteAuthService = inject(RemoteAuthService);
   authService = inject(AuthService);
+  location = inject(Location);
   submitted = false;
   loginForm = new FormGroup({
     user: new FormControl('', [Validators.required]),
@@ -36,8 +38,9 @@ export class LoginComponent {
         this.loginForm.value.pass as string,
       ).subscribe({
         next: (token) => {
+          this.toastr.success("You have successfully logged in", "Welcome back!");
           this.authService.updateToken(token).then(() => {
-            setTimeout(() => { this.router.navigateByUrl("/") }, 10);
+            setTimeout(() => { this.location.back() }, 10);
           });
         },
         error: (err) => {

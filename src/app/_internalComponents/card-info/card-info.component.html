@@ -3,6 +3,7 @@
   class="flex sm:justify-start flex-wrap justify-end items-center text-zinc-900 dark:text-zinc-300"
 >
   <div
+    data-testid="tags-container"
     class="h-full flex flex-row gap-4 justify-start items-center w-full sm:w-2/3 overflow-x-auto"
   >
     @for(tag of tags(); track tag) {
@@ -16,21 +17,27 @@
   <div class="flex flex-row gap-4 justify-end items-center w-1/3">
     <div (click)="upvoteClicked($event)">
       <fa-icon
+        data-testid="upvote-icon"
         [icon]="icons.upvote"
-        class="{{ vote() ? 'text-green-500' : '' }}  text-lg"
+        class="{{ vote() ? 'text-green-500' : '' }}  text-lg mr-2"
       ></fa-icon>
-      {{ upvotesNumber() }}
+      <span data-testid="upvote-count">{{ upvotesNumber() }}</span>
     </div>
     <div (click)="downvoteClicked($event)">
       <fa-icon
+        data-testid="downvote-icon"
         [icon]="icons.downvote"
-        class="{{ vote() === false ? 'text-red-400' : '' }} text-lg"
+        class="{{ vote() === false ? 'text-red-500' : '' }} text-lg mr-2"
       ></fa-icon>
-      {{ downvotesNumber() }}
+      <span data-testid="downvote-count">{{ downvotesNumber() }}</span>
     </div>
     <div (click)="commentClicked($event)">
-      <fa-icon [icon]="icons.comment" class="text-lg"></fa-icon>
-      {{ commentsNumber() }}
+      <fa-icon
+        data-testid="comment-icon"
+        [icon]="icons.comment"
+        class="text-lg mr-2"
+      ></fa-icon>
+      <span data-testid="comment-count">{{ commentsNumber() }}</span>
     </div>
   </div>
 </div>
@@ -38,6 +45,7 @@
 <div (click)="captureCardInfoClick($event)" class="mt-4">
   <div class="flex justify-center text-md">
     <input
+      data-testid="comment-input"
       type="text"
       [(ngModel)]="commentText"
       (keyup.enter)="submitComment($event)"
@@ -46,6 +54,7 @@
       class="w-full px-4 py-2 rounded-l-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-zinc-300"
     />
     <button
+      data-testid="comment-submit-button"
       class="px-4 py-2 rounded-r-lg bg-amber-600 text-zinc-50 font-semibold hover:bg-amber-700 transition"
       type="button"
       (click)="submitComment($event)"

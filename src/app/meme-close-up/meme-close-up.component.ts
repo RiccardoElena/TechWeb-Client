@@ -13,6 +13,7 @@ import { CommentsService } from '../_services/comments/comments.service';
 import { AuthService } from '../_services/auth/local-auth.service';
 import Swal from 'sweetalert2';
 import { CommentListComponent } from '../_internalComponents/comment-list/comment-list.component';
+import { NavigationService } from '../_services/navigation/navigation.service';
 
 @Component({
   selector: 'app-meme-close-up',
@@ -34,11 +35,12 @@ export class MemeCloseUpComponent {
 
   moreComments = [];
 
-  locationService = inject(Location);
+  navigationService = inject(NavigationService);
   memeService = inject(MemesService);
   router = inject(Router);
   authService = inject(AuthService);
-  commentService = inject(CommentsService); // Assuming the service is the same for comments
+  commentService = inject(CommentsService);
+  id: string | undefined;
 
   commentCurrentPage = signal(0);
   commentPageSize = signal(5);
@@ -54,33 +56,33 @@ export class MemeCloseUpComponent {
   ngOnInit() {
     this.route.params.subscribe({
       next: (params) => {
-        const id = params['id'];
-        console.log(id);
-        if (id) {
-          console.log('Meme ID from query params:', id);
-          this.memeService.getMemeById(id).subscribe({
+        this.id = params['id'];
+
+        if (this.id) {
+
+          this.memeService.getMemeById(this.id, this.commentCurrentPage(), this.commentPageSize()).subscribe({
             next: (meme) => {
               this.meme = meme;
               this.commentCurrentPage.set(this.meme.commentsPagination.page + 1);
               this.commentPageSize.set(this.meme.commentsPagination.limit);
               this.comments.set(this.meme.comments);
-              this.liked.set(this.meme.MemeVotes[0]?.isUpvote);
+              this.liked.set(this.meme.MemeVotes?.[0]?.isUpvote);
               this.totalNumberOfComments.set(this.meme.commentsPagination.totalCount);
               this.titleService.setTitle(`${this.meme.title} | TechWeb Meme Museum`);
             },
             error: (error) => {
-              console.error('Error fetching meme:', error);
-              this.router.navigate(['/404']); // Navigate to a 404 page if meme not found
+
+              this.router.navigate(['/404']);
             }
           });
         } else {
-          console.error('No meme ID provided in query params');
-          this.router.navigate(['/404']); // Navigate to a 404 page if no ID is provided
+
+          this.router.navigate(['/404']);
         }
       },
       error: (error) => {
-        console.error('Error reading query params:', error);
-        this.router.navigate(['/404']); // Navigate to a 404 page if there's an error
+
+        this.router.navigate(['/404']);
       }
     });
 
@@ -88,7 +90,7 @@ export class MemeCloseUpComponent {
   }
 
   goBack() {
-    this.locationService.back();
+    this.navigationService.navigateAndPop();
   }
 
   toggleShowFullDcp() {
@@ -98,14 +100,14 @@ export class MemeCloseUpComponent {
   clampDescription(text: string, maxLength: number = 100): string {
     if (!text) return '';
     const a = text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-    console.log('Clamped description:', a);
+
     return a;
   }
 
   async deleteMeme($event: MouseEvent) {
     $event.stopPropagation();
     if (!this.meme) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -126,7 +128,7 @@ export class MemeCloseUpComponent {
       this.memeService.deleteMeme(this.meme.id).subscribe({
         next: () => {
           if (!this.meme) {
-            return; // Ensure meme is defined before proceeding
+            return;
           }
           Swal.fire({
             title: 'Deleted!',
@@ -141,7 +143,7 @@ export class MemeCloseUpComponent {
           });
         },
         error: (error) => {
-          console.error('Error deleting meme:', error);
+
           Swal.fire({
             title: 'Error!',
             text: `An error occurred while deleting the meme`,
@@ -156,7 +158,7 @@ export class MemeCloseUpComponent {
 
     }
 
-    console.log(result);
+
 
   }
 
@@ -171,14 +173,26 @@ export class MemeCloseUpComponent {
   }
 
   loadMore() {
-    this.commentCurrentPage.set(this.commentCurrentPage() + 1);
-    // Here you would typically call a service to fetch more comments
-    console.log('Loading more comments for page:', this.commentCurrentPage());
-    // For demonstration, we will just append more comments to the existing ones
-    this.comments.update(currentComments => [
-      ...currentComments,
-      ...this.moreComments
-    ]);
+
+    if (!this.hasMoreComments()) return;
+    if (!this.id) return;
+    this.memeService.getMemeById(this.id, this.commentCurrentPage(), this.commentPageSize())
+      .subscribe(
+        {
+          next: (meme) => {
+            this.comments.update(currentComments => [
+              ...currentComments,
+              ...meme.comments
+            ]);
+            this.commentCurrentPage.set(meme.commentsPagination.page + 1)
+            this.totalNumberOfComments.set(meme.commentsPagination.totalCount);
+            this.commentPageSize.set(meme.commentsPagination.limit)
+
+          }
+        }
+
+      )
+
   }
 
   voteMeme(vote: boolean) {
@@ -188,7 +202,7 @@ export class MemeCloseUpComponent {
 
     this.memeService.voteMeme(this.meme.id, vote).subscribe({
       next: (updatedMeme) => {
-        console.log('Meme voted successfully:', updatedMeme);
+
         if (!this.meme) {
           return;
         }
@@ -206,7 +220,7 @@ export class MemeCloseUpComponent {
         this.liked.set(vote);
       },
       error: (error) => {
-        console.error('Error voting meme:', error);
+
       }
     });
 
@@ -214,7 +228,7 @@ export class MemeCloseUpComponent {
 
   handleUpvoteClick() {
     if (!this.meme) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (this.liked()) {
       this.unvoteMeme();
@@ -225,7 +239,7 @@ export class MemeCloseUpComponent {
 
   handleDownvoteClick() {
     if (!this.meme) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (this.liked() === false) {
       this.unvoteMeme();
@@ -236,26 +250,26 @@ export class MemeCloseUpComponent {
 
   unvoteMeme() {
     if (!this.meme) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     this.memeService.unvoteMeme(this.meme.id).subscribe({
       next: () => {
-        console.log('Meme unvoted successfully');
+
         if (!this.meme) {
-          return; // Ensure meme is defined before proceeding
+          return;
         }
         if (this.liked() === false) {
           this.meme.downvotesNumber--;
         } else if (this.liked() === true) {
           this.meme.upvotesNumber--;
         }
-        this.liked.set(undefined); // Reset liked state
+        this.liked.set(undefined);
       },
       error: (error) => {
-        console.error('Error unvoting meme:', error);
+
       }
     });
-    // call the service to unvote the meme
+
 
   }
 
@@ -263,15 +277,15 @@ export class MemeCloseUpComponent {
 
   handleCommentSubmit(comment: string) {
     if (!this.meme) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (comment.trim() === '') {
-      return; // Do not submit empty comments
+      return;
     }
     this.commentService.createComment(this.meme.id, comment).subscribe({
       next: (newComment) => {
-        console.log('Comment created successfully:', newComment);
-        newComment.CommentVotes = []; // Initialize CommentVotes to an empty array
+
+        newComment.CommentVotes = [];
         newComment.User = {
           userName: this.authService.getUser() || '',
           id: this.authService.getUserId() || ''
@@ -280,7 +294,7 @@ export class MemeCloseUpComponent {
         this.totalNumberOfComments.update(count => count + 1);
       },
       error: (error) => {
-        console.error('Error creating comment:', error);
+
       }
     });
   }

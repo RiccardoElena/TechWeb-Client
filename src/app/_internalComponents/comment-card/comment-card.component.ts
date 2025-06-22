@@ -40,11 +40,12 @@ export class CommentCardComponent {
   constructor() {
     effect(() => {
       const inputComment = this.inputComment();
-      console.log('Input comment changed:', inputComment);
+
       if (inputComment) {
-        console.log('Input comment:', inputComment);
+
         this.comment.set(inputComment);
-        this.liked.set(inputComment.CommentVotes[0]?.isUpvote);
+
+        this.liked.set(inputComment.CommentVotes?.[0]?.isUpvote);
       }
     });
   }
@@ -70,10 +71,10 @@ export class CommentCardComponent {
     if (result.isConfirmed) {
       const comment = this.comment();
       if (!comment) {
-        console.error('No comment to delete');
+
         return;
       }
-      console.log('Deleting comment:', comment.id, "MemeId:", comment.MemeId);
+
       this.commentService.deleteComment(comment.MemeId, comment.id).subscribe({
         next: () => {
           Swal.fire({
@@ -89,7 +90,7 @@ export class CommentCardComponent {
           });
         },
         error: (error) => {
-          console.error('Error deleting meme:', error);
+
           Swal.fire({
             title: 'Error!',
             text: `An error occurred while deleting the meme`,
@@ -104,13 +105,13 @@ export class CommentCardComponent {
 
     }
 
-    console.log(result);
+
 
   }
   clampDescription(text: string | undefined, maxLength: number = 100): string {
     if (!text) return '';
     const a = text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-    console.log('Clamped description:', a);
+
     return a;
   }
 
@@ -121,9 +122,8 @@ export class CommentCardComponent {
   editComment(event: MouseEvent) {
     event.stopPropagation();
     this.newComment = this.comment()?.content || '';
-    this.isEditing = !this.isEditing; // Toggle editing state
-    // call the service to edit the meme
-    console.log('Comment edited:', this.comment()?.id);
+    this.isEditing = !this.isEditing;
+
   }
 
   submitEditedComment(event: Event) {
@@ -136,13 +136,13 @@ export class CommentCardComponent {
 
     this.commentService.updateComment(this.comment()?.MemeId || '', this.comment()?.id || '', trimmedComment).subscribe({
       next: (updatedComment) => {
-        console.log('Comment updated:', updatedComment);
+
         this.comment.set(updatedComment);
-        this.isEditing = false; // Exit editing mode
+        this.isEditing = false;
         this.toastr.success('Comment updated successfully', 'Success');
       },
       error: (error) => {
-        console.error('Error updating comment:', error);
+
         this.toastr.error('Failed to update comment', 'Error');
       }
     });
@@ -170,7 +170,7 @@ export class CommentCardComponent {
         this.comment.set(comment);
       },
       error: (error) => {
-        console.error('Error voting comment:', error);
+
         this.toastr.error('Failed to vote on comment', 'Error');
       }
     });
@@ -214,7 +214,7 @@ export class CommentCardComponent {
         this.comment.set(comment);
       },
       error: (error) => {
-        console.error('Error unvoting comment:', error);
+
         this.toastr.error('Failed to unvote comment', 'Error');
       }
     });
@@ -226,25 +226,25 @@ export class CommentCardComponent {
 
   handleCommentSubmit(newComment: string) {
     if (newComment.trim() === '') {
-      return; // Do not submit empty comments
+      return;
     }
-    // Here you would typically call a service to submit the comment
+
 
     const comment = this.comment();
     if (comment) {
       this.commentService.createComment(comment.MemeId, newComment, comment.id).subscribe({
         next: (createdComment) => {
-          console.log('Comment created:', createdComment);
+
           this.toastr.success('Comment submitted successfully', 'Success');
-          this.newComment = ''; // Clear the input field
-          this.isEditing = false; // Exit editing mode
+          this.newComment = '';
+          this.isEditing = false;
         },
         error: (error) => {
-          console.error('Error creating comment:', error);
+
           this.toastr.error('Failed to submit comment', 'Error');
         }
       });
-      comment.commentsNumber++; // Increment the comments count
+      comment.commentsNumber++;
       this.comment.set(comment);
     }
 

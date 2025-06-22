@@ -51,18 +51,18 @@ export class CommentCloseUpComponent {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.replies.set([]);
-      this.currentPage.set(0); // Reset current page on new search
-      console.log('Route parameters:', params);
+      this.currentPage.set(0);
+
       this.commentId = params['commentId'];
       this.memeId = params['memeId'];
       if (!this.commentId || !this.memeId) {
-        console.error('Comment ID or Meme ID is missing in the route parameters');
+
         this.router.navigate(['/404']);
         return;
       }
 
       this.fetchReplies(this.memeId, this.commentId);
-      console.log(this.liked());
+
     });
   }
 
@@ -72,7 +72,7 @@ export class CommentCloseUpComponent {
 
   loadMoreReplies() {
     if (!this.memeId || !this.commentId) {
-      console.error('Meme ID or Comment ID is not set');
+
       return;
     }
     if (this.hasMore()) {
@@ -84,23 +84,23 @@ export class CommentCloseUpComponent {
     event.stopPropagation();
     const currentComment = this.comment();
     if (!currentComment) {
-      console.error('No comment to edit');
-      return; // Ensure comment is defined before proceeding
+
+      return;
     }
     const trimmedComment = this.newComment.trim();
     if (trimmedComment === '') {
-      console.error('Comment cannot be empty');
-      return; // Do not submit empty comments
+
+      return;
     }
     this.commentService.updateComment(currentComment.MemeId, currentComment.id, trimmedComment).subscribe({
       next: (updatedComment) => {
-        console.log('Comment updated successfully:', updatedComment);
+
         this.comment.set(updatedComment);
-        this.isEditing.set(false); // Exit editing mode
-        this.newComment = ''; // Clear the input field
+        this.isEditing.set(false);
+        this.newComment = '';
       },
       error: (error) => {
-        console.error('Error updating comment:', error);
+
       }
     });
   }
@@ -122,7 +122,7 @@ export class CommentCloseUpComponent {
     this.commentService.getReplies(memeId, commentId, page, size).subscribe({
       next: (comment) => {
         if (!comment) {
-          console.error('Comment not found for ID:', commentId);
+
           this.router.navigate(['/404']);
           return;
         }
@@ -132,11 +132,11 @@ export class CommentCloseUpComponent {
         this.pageSize.set(comment.pagination.limit);
         this.replies.update(replies => [...replies, ...comment.data.replies]);
         this.totalNumberOfReplies.set(comment.pagination.totalCount);
-        console.log('Fetched comment:', comment);
-        // Here you would typically set the fetched comment to a local variable
+
+
       },
       error: (error) => {
-        console.error('Error fetching comment:', error);
+
         this.router.navigate(['/404']);
       }
     });
@@ -147,7 +147,7 @@ export class CommentCloseUpComponent {
 
     const comment = this.comment();
     if (!comment) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -169,7 +169,7 @@ export class CommentCloseUpComponent {
         next: () => {
           const comment = this.comment();
           if (!comment) {
-            return; // Ensure meme is defined before proceeding
+            return;
           }
           Swal.fire({
             title: 'Deleted!',
@@ -189,7 +189,7 @@ export class CommentCloseUpComponent {
           });
         },
         error: (error) => {
-          console.error('Error deleting meme:', error);
+
           Swal.fire({
             title: 'Error!',
             text: `An error occurred while deleting the meme`,
@@ -204,12 +204,12 @@ export class CommentCloseUpComponent {
 
     }
 
-    console.log(result);
+
 
   }
 
   replyDeleted(commentId: string) {
-    console.log('Reply deleted with ID:', commentId);
+
     this.replies.update(replies => replies.filter(reply => reply.id !== commentId));
     this.totalNumberOfReplies.update(count => count - 1);
   }
@@ -222,7 +222,7 @@ export class CommentCloseUpComponent {
 
     this.commentService.voteComment(comment.MemeId, comment.id, vote).subscribe({
       next: (updatedComment) => {
-        console.log('Meme voted successfully:', updatedComment);
+
         if (!this.comment()) {
           return;
         }
@@ -252,7 +252,7 @@ export class CommentCloseUpComponent {
         this.liked.set(vote);
       },
       error: (error) => {
-        console.error('Error voting meme:', error);
+
       }
     });
 
@@ -260,7 +260,7 @@ export class CommentCloseUpComponent {
 
   handleUpvoteClick() {
     if (!this.comment()) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (this.liked()) {
       this.unvoteComment();
@@ -271,7 +271,7 @@ export class CommentCloseUpComponent {
 
   handleDownvoteClick() {
     if (!this.comment()) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (this.liked() === false) {
       this.unvoteComment();
@@ -283,13 +283,13 @@ export class CommentCloseUpComponent {
   unvoteComment() {
     const comment = this.comment();
     if (!comment) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     this.commentService.unvoteComment(comment.MemeId, comment.id).subscribe({
       next: () => {
-        console.log('Meme unvoted successfully');
+
         if (!this.comment()) {
-          return; // Ensure meme is defined before proceeding
+          return;
         }
         if (this.liked() === false) {
           this.comment.update(c => c ? ({
@@ -302,13 +302,13 @@ export class CommentCloseUpComponent {
             upvotesNumber: c.upvotesNumber - 1
           }) : null);
         }
-        this.liked.set(undefined); // Reset liked state
+        this.liked.set(undefined);
       },
       error: (error) => {
-        console.error('Error unvoting meme:', error);
+
       }
     });
-    // call the service to unvote the meme
+
 
   }
 
@@ -317,15 +317,15 @@ export class CommentCloseUpComponent {
   handleCommentSubmit(comment: string) {
     const currentComment = this.comment();
     if (!currentComment) {
-      return; // Ensure meme is defined before proceeding
+      return;
     }
     if (comment.trim() === '') {
-      return; // Do not submit empty comments
+      return;
     }
     this.commentService.createComment(currentComment.MemeId, comment, currentComment.id).subscribe({
       next: (newComment) => {
-        console.log('Comment created successfully:', newComment);
-        newComment.CommentVotes = []; // Initialize CommentVotes to an empty array
+
+        newComment.CommentVotes = [];
         newComment.User = {
           userName: this.authService.getUser() || '',
           id: this.authService.getUserId() || ''
@@ -334,7 +334,7 @@ export class CommentCloseUpComponent {
         this.totalNumberOfReplies.update(count => count + 1);
       },
       error: (error) => {
-        console.error('Error creating comment:', error);
+
       }
     });
   }

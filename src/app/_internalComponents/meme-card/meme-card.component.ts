@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { EnrichedMeme } from '../../_types/meme.types';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
@@ -45,7 +45,7 @@ export class MemeCardComponent {
   memeService = inject(MemesService);
   commentService = inject(CommentsService);
 
-
+  memeDeleted = output<string>();
   inputMeme = input<EnrichedMeme>();
   liked = signal<boolean | undefined>(undefined);
 
@@ -78,11 +78,11 @@ export class MemeCardComponent {
               confirmButton: '!bg-green-600 !text-white'
             }
           }).then(() => {
-            this.router.navigate([this.router.url]);
+            this.memeDeleted.emit(this.meme.id);
           });
         },
         error: (error) => {
-          console.error('Error deleting meme:', error);
+
           Swal.fire({
             title: 'Error!',
             text: `An error occurred while deleting the meme`,
@@ -97,7 +97,7 @@ export class MemeCardComponent {
 
     }
 
-    console.log(result);
+
 
   }
 
@@ -112,7 +112,7 @@ export class MemeCardComponent {
 
 
   voteMeme(vote: boolean) {
-    // call the service to vote the meme
+
     this.memeService.voteMeme(this.meme.id, vote).subscribe({
       next: (updatedMeme) => {
         if (vote) {
@@ -127,10 +127,10 @@ export class MemeCardComponent {
           this.meme.upvotesNumber--;
         }
         this.liked.set(vote);
-        console.log('Meme voted successfully:', updatedMeme);
+
       },
       error: (error) => {
-        console.error('Error voting meme:', error);
+
       }
     });
 
@@ -165,7 +165,7 @@ export class MemeCardComponent {
         this.liked.set(undefined);
       },
       error: (error) => {
-        console.error('Error unvoting meme:', error);
+
       }
     });
 
@@ -174,20 +174,20 @@ export class MemeCardComponent {
   handleCommentSubmit(comment: string) {
     const trimmedComment = comment.trim();
     if (trimmedComment === '') {
-      return; // Do not submit empty comments
+      return;
     }
 
     this.commentService.createComment(this.meme.id, trimmedComment).subscribe({
       next: (newComment) => {
-        console.log('Comment submitted:', newComment);
-        this.meme.commentsNumber++; // Increment the comments count
+
+        this.meme.commentsNumber++;
       },
       error: (error) => {
-        console.error('Error submitting comment:', error);
+
       }
     });
 
-    console.log('Comment submitted:', comment);
+
   }
 
   expandCard() {

@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SortCriteria, SortBy, SortDirection } from '../../_types/sort-criteria.type';
@@ -20,6 +20,19 @@ export class SearchBarComponent {
     close: faClose,
     filter: faFilter
   };
+
+  inputText = input<string>('');
+  inputTags = input<string[]>([]);
+  inputSelectedOrder = input<`${SortBy},${SortDirection}`>('createdAt,DESC');
+
+  constructor() {
+    effect(() => {
+      this.searchQuery = this.inputText();
+      this.tags = this.inputTags();
+      this.selectedOrder = this.inputSelectedOrder();
+    });
+  }
+
   onSearch = input<SearchFn>();
   extended = input<boolean>(false);
   tags: string[] = [];

@@ -9,7 +9,7 @@ export function authInterceptor(request: HttpRequest<unknown>, next: HttpHandler
 
 
   if (token) {
-    // Clone the request and add the Authorization header with the token
+
     request = request.clone({
       setHeaders: {
         Authorization: 'Bearer ' + token

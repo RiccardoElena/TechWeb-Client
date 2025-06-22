@@ -11,7 +11,17 @@
         >WebTech Meme Museum</span
       >
     </a>
-    <dark-mode-toggle class="lg:order-1" />
+    <div class="flex items-center h-7 space-x-4 rtl:space-x-reverse lg:order-1">
+      <dark-mode-toggle />
+      @if(this.authService.isUserAuthenticated()){
+      <a
+        (click)="handleNavigationClick('logout', $event)"
+        class="w-7 h-7 my-4 flex items-center space-x-2 rtl:space-x-reverse text-zinc-900 hover:text-amber-700 dark:text-zinc-300 dark:hover:text-amber-500"
+      >
+        <fa-icon [icon]="icons.logout"></fa-icon>
+      </a>
+      }
+    </div>
     <button
       (click)="toggle()"
       data-collapse-toggle="navbar-default"
@@ -39,7 +49,7 @@
     </button>
     <div
       [@openClose]="isMobile ? (isOpen ? 'open' : 'closed') : 'open'"
-      class="z-100 w-full lg:block lg:w-1/2 {{
+      class="mr-4 z-100 w-full lg:block lg:w-1/2 {{
         this.authService.isUserAuthenticated() ? '' : 'w-1/3 xl:w-1/4'
       }}"
       id="navbar-default"
@@ -55,10 +65,11 @@
           }}"
         >
           <a
+            data-testid="meme-of-the-day"
             (click)="handleNavigationClick('memeOfTheDay', $event)"
             [routerLink]="['/memes', memeOfTheDayId]"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
-            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            routerLinkActive=" bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="text-center block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Meme of the Day</a
           >
         </li>
@@ -71,10 +82,11 @@
           }}"
         >
           <a
+            data-testid="login"
             (click)="handleNavigationClick()"
             routerLink="/login"
             routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
-            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            class="text-center block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Login</a
           >
         </li>
@@ -89,7 +101,7 @@
             (click)="handleNavigationClick()"
             routerLink="/signup"
             routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
-            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            class="text-center block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
             >Sign up</a
           >
         </li>
@@ -97,6 +109,21 @@
         <!-- this is gonna be potentially replaced with a proper profile page -->
         <li
           class="leading-7 {{
+            isMobile
+              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
+              : ''
+          }}"
+        >
+          <a
+            (click)="handleNavigationClick()"
+            routerLink="/memes/create"
+            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
+            class="text-center block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            >Create Meme</a
+          >
+        </li>
+        <li
+          class="leading-7 max-w-full lg:max-w-1/3 {{
             isMobile
               ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
               : ''
@@ -112,40 +139,10 @@
                 ? 'bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500'
                 : ''
             }}"
-            class="block py-2 px-3 text-zinc-900 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
-            >My Memes</a
-          >
+            class="text-center truncate italic block py-2 px-3 text-zinc-900 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
+            >{{ this.authService.user() }}
+          </a>
         </li>
-        <li
-          class="leading-7 {{
-            isMobile
-              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
-              : ''
-          }}"
-        >
-          <a
-            (click)="handleNavigationClick()"
-            routerLink="/memes/create"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-50 lg:text-amber-700 lg:dark:text-amber-500"
-            class="block py-2 px-3 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
-            >Create Meme</a
-          >
-        </li>
-        <li
-          class="leading-7 {{
-            isMobile
-              ? 'border-b rounded border-amber-800 mb-2 dark:border-amber-800'
-              : ''
-          }}"
-        >
-          <a
-            (click)="handleNavigationClick('logout')"
-            routerLinkActive="bg-amber-700 hover:bg-amber-800 dark:hover:bg-amber-600 text-zinc-300 lg:text-amber-700 lg:dark:text-amber-500"
-            class="block py-2 px-3 text-zinc-900 rounded lg:bg-transparent hover:bg-zinc-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-amber-700 lg:p-0 dark:text-zinc-300 lg:dark:hover:text-amber-500 dark:hover:bg-zinc-700 dark:hover:text-zinc-300 lg:dark:hover:bg-transparent"
-            >Welcome, {{ this.authService.user() }} (log out)</a
-          >
-        </li>
-
         }
       </ul>
     </div>

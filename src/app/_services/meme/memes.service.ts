@@ -29,7 +29,9 @@ export class MemesService {
       .set('sortDirection', sortCriteria.sortDirection)
       .set('page', page)
       .set('limit', limit);
-    console.log('User ID:', userId);
+
+    console.log(limit)
+
     if (userId) { params = params.set('userId', userId); }
 
     if (title && title.trim() !== '') { params = params.set('title', title); }

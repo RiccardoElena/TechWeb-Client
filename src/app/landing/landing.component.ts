@@ -22,7 +22,7 @@ export class LandingComponent {
 
   search(router: Router, tags: string[], searchQuery: string, sortCriteria: SortCriteria, userId?: string) {
 
-    console.log('Search initiated with:', tags, searchQuery, sortCriteria, userId);
+
 
     const queryParams: SearchQuery = {};
 

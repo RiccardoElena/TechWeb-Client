@@ -18,7 +18,7 @@ export class MemeFormComponent {
 
   memeId: string | null = null;
 
-  maxFileSize: number = 5 * 1024 * 1024; // 5 MB
+  maxFileSize: number = 5 * 1024 * 1024;
   previewUrl: string | ArrayBuffer | null = null;
   fileError = false;
   title: string = '';
@@ -44,7 +44,7 @@ export class MemeFormComponent {
       this.memeService.getMemeById(this.memeId).subscribe({
         next: (meme) => {
           if (meme.User.id !== this.authService.getUserId()) {
-            console.error('Unauthorized access to edit meme:', meme);
+
             this.router.navigate(['/404']);
             return;
           }
@@ -57,7 +57,7 @@ export class MemeFormComponent {
 
         },
         error: (error) => {
-          console.error('Error fetching meme:', error);
+
         }
       });
     }
@@ -92,6 +92,7 @@ export class MemeFormComponent {
       event.preventDefault();
       const value = this.currentTag.trim();
       if (value && !this.tags.includes(value)) {
+
         this.tags.push(value);
       }
       this.currentTag = '';
@@ -104,18 +105,14 @@ export class MemeFormComponent {
   }
 
   updateMeme() {
-    console.log('Updating meme with title:', this.title.trim());
+
     this.memeService.updateMeme(this.memeId!, {
       title: this.title.trim(),
       description: this.description.trim(),
       tags: this.tags,
     }).subscribe({
       next: () => {
-        console.log('Meme updated with data:', {
-          title: this.title.trim(),
-          description: this.description.trim(),
-          tags: this.tags
-        });
+
         this.router.navigate(['/memes/search'], {
           queryParams: {
             userId: this.authService.getUserId(),
@@ -123,14 +120,14 @@ export class MemeFormComponent {
         });
       },
       error: (error) => {
-        console.error('Error updating meme:', error);
-        // Handle error (e.g., show notification)
+
+
       }
     });
   }
 
   createMeme() {
-    console.log('Creating meme with title:', this.title.trim());
+
     const formData = new FormData();
     if (!this.selectedFile) {
       this.fileError = true;
@@ -146,12 +143,8 @@ export class MemeFormComponent {
     formData.append('tags', this.tags.join(','));
     this.memeService.createMeme(formData).subscribe({
       next: () => {
-        console.log('Meme created with data:', {
-          title: this.title.trim(),
-          description: this.description.trim(),
-          tags: this.tags,
-          file: this.selectedFile
-        });
+
+
         this.router.navigate(['/memes/search'], {
           queryParams: {
             userId: this.authService.getUserId(),
@@ -159,7 +152,7 @@ export class MemeFormComponent {
         });
       },
       error: (error) => {
-        console.error('Error creating meme:', error);
+
       }
     });
 

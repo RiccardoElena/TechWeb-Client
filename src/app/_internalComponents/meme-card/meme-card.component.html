@@ -1,4 +1,5 @@
 <div
+  [attr.data-testid]="'meme-card-' + meme.id"
   (click)="expandCard()"
   class="w-[90vw] sm:min-h-[55vh] flex flex-col shadow-2xl relative md:max-w-md border rounded-lg p-4 border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800"
 >
@@ -12,7 +13,7 @@
       >{{ meme.User.userName }}</a
     >
   </p>
-  <h3 class="mb-2">{{ meme.title }}</h3>
+  <h3 data-testid="meme-title" class="mb-2">{{ meme.title }}</h3>
   @if(this.authService.getUserId() === meme.User.id){
   <button
     class="absolute top-6 right-4 text-zinc-500 hover:text-red-500"
@@ -37,7 +38,9 @@
     />
   </div>
 
-  <p class="my-2 max-w-md line-clamp-3 break-all whitespace-normal">
+  <p
+    class="my-4 my-2 max-w-md line-clamp-3 break-all whitespace-normal min-h-[4.5em] max-h-[4.5em]"
+  >
     {{ meme.description }}
   </p>
 

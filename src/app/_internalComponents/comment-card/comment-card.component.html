@@ -13,6 +13,7 @@
   </p>
   @if(this.authService.getUserId() === comment()?.User?.id){
   <button
+    data-testid="delete-comment-button"
     class="absolute top-4 right-4 text-zinc-500 hover:text-red-500"
     type="button"
     (click)="deleteComment($event)"
@@ -51,7 +52,7 @@
   </div>
   } @else{
   <p
-    class="mb-2 text-md text-zinc-900 dark:text-zinc-300 line-clamp-3 break-all whitespace-normal"
+    class="hover:text-amber-600 mb-2 text-md text-zinc-900 dark:text-zinc-300 line-clamp-3 break-all whitespace-normal"
   >
     {{ this.comment()?.content }}
   </p>

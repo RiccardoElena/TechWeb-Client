@@ -33,7 +33,7 @@ export interface EnrichedMeme extends Meme {
 
 export interface EnrichedMemeList {
   user?: {
-    userId: string;
+    id: string;
     userName: string;
   },
   data: EnrichedMeme[],

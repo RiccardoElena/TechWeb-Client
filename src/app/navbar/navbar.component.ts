@@ -8,12 +8,15 @@ import {
   style,
   animate,
   transition,
-  // ...
+
 } from '@angular/animations';
 import Swal from 'sweetalert2';
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MemesService } from '../_services/meme/memes.service';
+import { NavigationService } from '../_services/navigation/navigation.service';
+import { Location } from '@angular/common';
 
 type NavigationEvent = "memeOfTheDay" | "home" | "search" | "profile" | "login" | "logout";
 
@@ -25,12 +28,12 @@ type NavigationEvent = "memeOfTheDay" | "home" | "search" | "profile" | "login" 
       state('closed', style({ height: '0', opacity: 0, overflow: 'hidden' })),
       state('open', style({ height: '*', opacity: 1, overflow: 'hidden' })),
       transition('closed <=> open', [
-        animate('300ms cubic-bezier(.68,-0.55,.27,1.55)') // bounce effect
+        animate('300ms cubic-bezier(.68,-0.55,.27,1.55)')
       ]),
 
     ])
   ],
-  imports: [RouterLink, RouterLinkActive, DarkModeToggleComponent],
+  imports: [RouterLink, RouterLinkActive, DarkModeToggleComponent, FontAwesomeModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
@@ -42,7 +45,13 @@ export class NavbarComponent {
   activeRoute = inject(ActivatedRoute)
   authService = inject(AuthService);
   memeService = inject(MemesService);
-  memeOfTheDayId = ''; // This will be set to the ID of the meme of the day, if available
+  memeOfTheDayId = '';
+  navigation = inject(NavigationService)
+  location = inject(Location)
+
+  icons = {
+    logout: faRightFromBracket
+  };
 
   constructor(private readonly breakpointObserver: BreakpointObserver) {
     this.breakpointObserver.observe(['(max-width: 1024px)'])
@@ -62,20 +71,21 @@ export class NavbarComponent {
    */
   async handleNavigationClick(navigationEvent?: NavigationEvent, event?: MouseEvent) {
     if (event) {
-      event.preventDefault(); // Prevent default link behavior
-      event.stopPropagation(); // Stop the event from propagating further
+      event.preventDefault();
+      event.stopPropagation();
     }
     this.isOpen = false;
     switch (navigationEvent) {
       case "memeOfTheDay":
         this.memeService.getMemeOfTheDayId().subscribe({
           next: (memeId) => {
-            console.log('Meme of the day ID:', memeId);
+
             this.memeOfTheDayId = memeId;
-            this.router.navigate(['/memes', memeId]);
+
+            this.router.navigate(['/memes', memeId], { replaceUrl: true });
           },
           error: (error) => {
-            console.error('Error fetching meme of the day ID:', error);
+
           }
         });
         break;
@@ -95,8 +105,8 @@ export class NavbarComponent {
           }
         });
         if (response.isConfirmed) {
-          this.router.navigateByUrl('/logout'); // Navigate to the logout component
-          return; // User cancelled the logout
+          this.router.navigateByUrl('/logout');
+          return;
         }
         break;
     }

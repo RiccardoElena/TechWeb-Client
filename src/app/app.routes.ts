@@ -6,7 +6,7 @@ import { authGuard } from './_guards/auth/auth.guard';
 import { LogoutComponent } from './logout/logout.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
 import { MemeCloseUpComponent } from './meme-close-up/meme-close-up.component';
-import { CreateMemeComponent } from './create-meme/create-meme.component';
+
 
 import { MemeFormComponent } from './meme-form/meme-form.component';
 import { CommentCloseUpComponent } from './comment-close-up/comment-close-up.component';

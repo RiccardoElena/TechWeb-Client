@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Location } from '@angular/common';
 import { RemoteAuthService } from '../_services/auth/remote-auth.service';
 import { AuthService } from '../_services/auth/local-auth.service';
 
@@ -16,7 +17,8 @@ export class SignupComponent {
   toastr = inject(ToastrService);
   router = inject(Router);
   remoteAuthService = inject(RemoteAuthService);
-  authService = inject(AuthService); // Assuming RemoteAuthService handles token management
+  location = inject(Location);
+  authService = inject(AuthService);
   submitted = false;
   signupForm = new FormGroup({
     user: new FormControl('', [Validators.required]),
@@ -36,8 +38,9 @@ export class SignupComponent {
         this.signupForm.value.pass as string,
       ).subscribe({
         next: (token) => {
+          this.toastr.success("You have successfully signed up", "Welcome!");
           this.authService.updateToken(token).then(() => {
-            setTimeout(() => { this.router.navigateByUrl("/") }, 10);
+            setTimeout(() => { this.location.back() }, 10);
           });
         },
         error: (err) => {

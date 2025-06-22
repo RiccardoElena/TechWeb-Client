@@ -16,6 +16,7 @@
       class="w-full px-4 py-2 rounded-l-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-zinc-300 shadow-md dark:bg-zinc-800 dark:border-zinc-600 dark:text-zinc-300"
     />
     <button
+      data-testid="search-button"
       class="px-4 py-2 rounded-r-lg bg-amber-600 text-zinc-50 font-semibold hover:bg-amber-700 shadow-md transition"
       type="button"
       (click)="searchMemes()"
@@ -26,6 +27,7 @@
   @if(!extended()){
   <div class="flex mx-4 items-center justify-center">
     <button
+      data-testid="advanced-search-button"
       class="px-4 py-2 text-md rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 font-semibold shadow-md hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
       type="button"
       (click)="advancedMode = !advancedMode"
@@ -36,6 +38,7 @@
   } @if(!advancedMode && extended()){
   <div class="flex justify-center mb-4">
     <button
+      data-testid="advanced-search-button"
       class="px-4 py-2 text-md rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-300 font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-600 transition"
       type="button"
       (click)="advancedMode = !advancedMode"
@@ -63,6 +66,7 @@
         Sort by:
       </label>
       <select
+        data-testid="order-select"
         id="orderSelect"
         [(ngModel)]="selectedOrder"
         class="w-full appearance-none px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -85,7 +89,7 @@
         class="flex items-center gap-2 border border-zinc-300 dark:border-zinc-600 pl-3 rounded-lg dark:bg-zinc-800"
       >
         <div
-          class="flex overflow-x-auto whitespace-nowrap w-62/100 md:w-9/10 items-center gap-2 pl-2"
+          class="flex overflow-x-auto whitespace-nowrap w-1/2 sm:w-62/100 md:w-3/4 items-center gap-2 pl-2"
         >
           @for (tag of tags; track tag; let i = $index) {
           <span
@@ -97,6 +101,7 @@
             </button> </span
           >}
           <input
+            data-testid="tag-input"
             [(ngModel)]="inputValue"
             (keydown)="handleKey($event)"
             placeholder="Add tags..."
@@ -105,7 +110,7 @@
         </div>
 
         <button
-          class="px-4 py-2 w-1/2 md:w-1/10 text-md rounded-r-lg bg-red-500 text-zinc-50 font-semibold hover:bg-red-600 transition"
+          class="px-4 py-2 w-1/2 sm:w-38/100 md:w-1/4 text-md rounded-r-lg bg-red-500 text-zinc-50 font-semibold hover:bg-red-600 transition"
           type="button"
           (click)="tags = []; inputValue = ''"
         >

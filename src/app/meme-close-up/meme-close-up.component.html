@@ -1,43 +1,46 @@
-<div class="min-h-screen">
-  <div class="relative">
-    <div class="w-95/100">
-      <h1
-        class="mx-4 mt-20 md:mt-10 text-3xl md:text-5xl lg:text-7xl font-bold mt-10 text-zinc-900 dark:text-zinc-300 truncate"
-      >
-        {{ meme?.title }}
-      </h1>
-      <h2
-        class="text-2xl md:text-4xl text-zinc-900 dark:text-zinc-300 ml-8 truncate"
-      >
-        by {{ meme?.User?.userName || "" }}
-      </h2>
-    </div>
+<div class="min-h-screen mt-20 md:mt-10">
+  <div class="w-full px-4 mx-auto flex items-center justify-end">
     <button
-      class="absolute w-8 h-8 flex items-center justify-center border-1 hover:bg-red-500 border-red-500 rounded-full top-2 right-8 text-red-100 hover:text-zinc-800 dark:hover:text-zinc-300 bg-white dark:bg-zinc-800"
+      class="w-8 h-8 flex items-center justify-center border-1 hover:bg-red-500 border-red-500 rounded-full top-2 right-8 text-red-100 hover:text-zinc-800 dark:hover:text-zinc-300 bg-white dark:bg-zinc-800"
       type="button"
       (click)="goBack()"
     >
       <fa-icon [icon]="icons.close"></fa-icon>
     </button>
   </div>
+
+  <div class="mx-auto w-95/100">
+    <h1
+      class="line-clamp-3 md:line-clamp-2 mx-4 text-3xl md:text-5xl lg:text-7xl font-bold mt-10 text-zinc-900 dark:text-zinc-300"
+    >
+      {{ meme?.title }}
+    </h1>
+    <h2
+      class="text-2xl md:text-4xl text-zinc-900 dark:text-zinc-300 ml-8 truncate"
+    >
+      by {{ meme?.User?.userName || "" }}
+    </h2>
+  </div>
+
   <div
+    data-testid="meme-close-up"
     class="relative my-4 p-2 md:p-4 w-9/10 sm:w-95/100 2xl:w-3/5 mx-auto bg-white dark:bg-zinc-800 rounded-lg shadow-md text-zinc-900 dark:text-zinc-300"
   >
     @if(this.authService.getUserId() === meme?.User?.id){
     <div class="absolute top-2 right-2 flex space-x-2">
       <button
-        class="absolute top-6 right-4 text-zinc-500 hover:text-red-500"
-        type="button"
-        (click)="deleteMeme($event)"
-      >
-        <fa-icon [icon]="icons.delete"></fa-icon>
-      </button>
-      <button
-        class="absolute top-6 right-12 text-zinc-500 hover:text-amber-500"
+        class="absolute w-6 h-6 rounded-full top-6 right-12 bg-zinc-100/70 border-zinc-400 border text-zinc-500 hover:text-amber-500"
         type="button"
         (click)="editMeme($event)"
       >
         <fa-icon [icon]="icons.edit"></fa-icon>
+      </button>
+      <button
+        class="ml-4 absolute w-6 h-6 rounded-full top-6 bg-zinc-100/70 border-zinc-400 border right-4 text-zinc-500 hover:text-red-500"
+        type="button"
+        (click)="deleteMeme($event)"
+      >
+        <fa-icon [icon]="icons.delete"></fa-icon>
       </button>
     </div>
     }
@@ -45,6 +48,7 @@
       [src]="meme?.filePath"
       [alt]="meme?.title"
       class="mx-auto w-auto h-auto sm:h-[50vh] rounded-lg"
+      data-testid="meme-image"
     />
     <p
       class="mt-4 text-md md:text-xl text-justify {{
@@ -72,28 +76,7 @@
   <app-comment-list
     [comments]="comments()"
     [totalNumberOfComments]="totalNumberOfComments()"
-    (loadMore)="loadMore()"
+    (loadMoreComments)="loadMore()"
     (commentDeleted)="commentDeleted($event)"
   ></app-comment-list>
 </div>
-
-<!-- <div
-  class="flex flex-col justify-center my-4 md:mt-8 bg-zinc-100 dark:bg-zinc-800 w-95/100 2xl:w-3/5 mx-auto p-4 rounded-lg shadow-md"
->
-  <h3 class="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-300">
-    Comments
-  </h3>
-  @for(comment of comments(); track comment.id) {
-  <app-comment-card
-    [inputComment]="comment"
-    (commentDeleted)="commentDeleted($event)"
-  ></app-comment-card>
-  } @if(comments().length < this.totalNumberOfComments()){
-  <button
-    class="mx-auto rounded-xl bg-amber-600 text-zinc-50 dark:bg-amber-700 p-4 font-semibold hover:bg-amber-700 dark:hover:bg-amber-800 transition"
-    (click)="loadMore()"
-  >
-    Show More
-  </button>
-  }
-</div> -->

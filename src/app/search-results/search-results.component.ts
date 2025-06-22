@@ -6,8 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MemesService } from '../_services/meme/memes.service';
 import { AuthService } from '../_services/auth/local-auth.service';
 import { RouterLink } from '@angular/router';
-import { SortCriteria } from '../_types/sort-criteria.type';
+import { SortBy, SortCriteria, SortDirection } from '../_types/sort-criteria.type';
 import { SearchQuery } from '../landing/landing.component';
+import { NavigationService } from '../_services/navigation/navigation.service';
 
 
 @Component({
@@ -20,36 +21,42 @@ export class SearchResultsComponent {
 
   memes: EnrichedMeme[] = [];
   private currentPage = -1;
-  private pageSize = 10;
+  private pageSize = 1;
   hasMore = true;
+  tags: string[] = [];
+  searchQuery = '';
+  sortCriteria: `${SortBy},${SortDirection}` = 'createdAt,DESC';
 
   authService = inject(AuthService);
+  navigationService = inject(NavigationService);
 
-  user: { userId: string, userName: string } | undefined = undefined;
+  user: { id: string, userName: string } | undefined = undefined;
 
   private route = inject(ActivatedRoute);
 
   private memeService = inject(MemesService);
 
   ngOnInit() {
-    console.log(this.authService.authState());
+
 
     this.route.queryParams.subscribe(params => {
-      this.currentPage = -1; // Reset current page on new search
-      this.pageSize = 10; // Reset page size on new search
+      this.navigationService.push(this.route.snapshot.url.join('/'), params);
+      this.currentPage = -1;
+      this.pageSize = 10;
       this.memes = [];
       this.user = undefined;
-      console.log('Route query parameters:', params);
-      const tags = params['tags'] ? params['tags'].split(',') : [];
-      const searchQuery = params['query'] || '';
+
+      this.tags = params['tags'] ? params['tags'].split(',') : [];
+      this.searchQuery = params['query'] || '';
       const sortBy = params['sortBy'] || 'createdAt';
       const sortOrder = params['sortOrder'] || 'DESC';
+      this.sortCriteria = `${sortBy},${sortOrder}` as `${SortBy},${SortDirection}`;
       const userId = params['userId'];
-      console.log('Query parameters:', { tags, searchQuery, sortBy, sortOrder, userId });
+
 
       this.fetchMemes(
-        tags,
-        searchQuery,
+        this.tags,
+        this.searchQuery,
         {
           sortedBy: sortBy as SortCriteria['sortedBy'],
           sortDirection: sortOrder as SortCriteria['sortDirection']
@@ -80,7 +87,7 @@ export class SearchResultsComponent {
     sortCriteria: SortCriteria,
     userId?: string,
   ) {
-    console.log(this.currentPage)
+
     this.memeService.getMemes(
       tags,
       searchQuery,
@@ -89,8 +96,9 @@ export class SearchResultsComponent {
       ++this.currentPage,
       this.pageSize
     ).subscribe((data: EnrichedMemeList) => {
-      console.log('Fetched memes:', data);
+
       this.user = data.user
+
       this.memes = [...this.memes, ...data.data];
       this.hasMore = data.pagination.hasMore;
       this.currentPage = data.pagination.page;
@@ -98,8 +106,13 @@ export class SearchResultsComponent {
     });
   }
 
+  onMemeDelete(memeId: string) {
+
+    this.memes = this.memes.filter(meme => meme.id !== memeId);
+  }
+
   onSearch(router: Router, tags: string[], searchQuery: string, sortCriteria: SortCriteria, userId?: string) {
-    console.log('Search function called with:', { tags, searchQuery, sortCriteria, userId });
+
     const queryParams: SearchQuery = {};
 
     if (tags.length > 0) {

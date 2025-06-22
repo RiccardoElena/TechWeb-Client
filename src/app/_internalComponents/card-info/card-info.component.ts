@@ -36,7 +36,6 @@ export class CardInfoComponent {
 
 
   commentClicked(event: Event) {
-
     event.stopPropagation();
     this.isCommenting = !this.isCommenting;
   }

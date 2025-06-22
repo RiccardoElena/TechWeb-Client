@@ -56,7 +56,7 @@ export class AuthService {
       isAuthenticated: this.verifyToken(token)
     })
 
-    console.log("Token updated:", this.authState());
+
   }
 
   getToken() {
